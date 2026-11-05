@@ -52,7 +52,8 @@ class LoginViewModel @Inject constructor(
             }
             _estado.update { estado ->
                 when (resultado) {
-                    is ResultadoLogin.Sucesso -> estado.copy(carregando = false, senha = "")
+                    // O aparelho é compartilhado entre perfis: quem sair não deixa o e-mail na tela.
+                    is ResultadoLogin.Sucesso -> LoginUiState()
                     is ResultadoLogin.CamposInvalidos -> estado.copy(
                         carregando = false,
                         erroEmail = R.string.login_erro_email.takeIf { resultado.emailInvalido },
