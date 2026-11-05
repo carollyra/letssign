@@ -46,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.graphics.createBitmap
 import br.com.letssign.R
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
@@ -193,10 +194,9 @@ private fun gerarPng(tracos: List<List<Offset>>, espessuraPx: Float): ByteArray 
     val altura = pontos.maxOf { it.y } + margem - topo
     val escala = (LARGURA_MAXIMA_PNG / max(largura, altura)).coerceAtMost(2f)
 
-    val bitmap = Bitmap.createBitmap(
+    val bitmap = createBitmap(
         ceil(largura * escala).toInt().coerceAtLeast(1),
         ceil(altura * escala).toInt().coerceAtLeast(1),
-        Bitmap.Config.ARGB_8888,
     )
     val tela = android.graphics.Canvas(bitmap)
     tela.scale(escala, escala)

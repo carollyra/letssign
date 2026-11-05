@@ -5,6 +5,7 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
+import androidx.core.net.toUri
 import br.com.letssign.di.DispatcherIo
 import br.com.letssign.domain.model.ArquivoPdf
 import br.com.letssign.domain.repository.ArmazenamentoPdf
@@ -27,7 +28,7 @@ class ArmazenamentoPdfLocal @Inject constructor(
 ) : ArmazenamentoPdf {
 
     override suspend fun importar(origem: String): ResultadoImportacao = withContext(dispatcher) {
-        val uri = Uri.parse(origem)
+        val uri = origem.toUri()
         val destino = pastaDocumentos.novoArquivo()
         try {
             if (!copiar(uri, destino)) {

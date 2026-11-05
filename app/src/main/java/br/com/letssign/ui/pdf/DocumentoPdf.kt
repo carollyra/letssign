@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import androidx.core.graphics.createBitmap
 import java.io.File
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +50,7 @@ class DocumentoPdf private constructor(
                 val altura = (largura * pagina.height / pagina.width.toFloat())
                     .roundToInt()
                     .coerceAtLeast(1)
-                Bitmap.createBitmap(largura, altura, Bitmap.Config.ARGB_8888).also { bitmap ->
+                createBitmap(largura, altura).also { bitmap ->
                     bitmap.eraseColor(Color.WHITE)
                     pagina.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                 }
