@@ -111,4 +111,12 @@ interface DocumentoRepository {
         caminhoAssinado: String,
         agora: Long,
     ): ResultadoRegistroAssinatura
+
+    /**
+     * Cria um rascunho na versão seguinte, ligado ao documento de origem e com os mesmos
+     * signatários e campos, usando [arquivo] como PDF. O documento de origem não muda.
+     *
+     * Lança [IllegalStateException] se a origem ainda for rascunho: rascunho se edita direto.
+     */
+    suspend fun criarNovaVersao(documentoId: Long, adminId: Long, arquivo: ArquivoPdf, agora: Long): Long
 }

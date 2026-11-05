@@ -178,4 +178,29 @@
     <string name="assinatura_erro_vazia">Desenhe a assinatura antes de confirmar.</string>
     <string name="assinatura_erro_gravar">Não foi possível gravar a assinatura no PDF. Tente novamente.</string>
     <string name="assinatura_erro_concluido">Este documento já foi concluído e não aceita novas assinaturas.</string>
+
+    <string name="acompanhamento_titulo">Acompanhamento</string>
+    <string name="acompanhamento_criado">Criado</string>
+    <string name="acompanhamento_enviado">Enviado</string>
+    <string name="acompanhamento_concluido">Concluído</string>
+    <string name="acompanhamento_sem_data">—</string>
+    <string name="acompanhamento_derivado">Nova versão de um documento já enviado.</string>
+    <string name="acompanhamento_abrir_final">Abrir PDF final assinado</string>
+    <string name="acompanhamento_ver_documento">Ver documento</string>
+    <string name="acompanhamento_continuar_rascunho">Continuar edição do rascunho</string>
+    <string name="acompanhamento_nova_versao">Criar nova versão</string>
+    <string name="acompanhamento_nova_versao_criando">Criando nova versão…</string>
+    <string name="acompanhamento_nova_versao_confirmar">Criar rascunho</string>
+    <string name="acompanhamento_nova_versao_explicacao">Este documento não pode mais ser alterado. A nova versão começa como rascunho, com o mesmo PDF, signatários e campos, e precisa ser enviada de novo. O documento atual continua como está.</string>
+    <string name="acompanhamento_nova_versao_erro">Não foi possível criar a nova versão. Tente novamente.</string>
+    <string name="acompanhamento_imutavel">Depois do envio o documento não pode ser alterado. Para mudar algo, crie uma nova versão.</string>
+    <string name="acompanhamento_sem_signatarios">Nenhum signatário.</string>
+    <string name="acompanhamento_historico">Histórico</string>
+    <string name="acompanhamento_historico_vazio">Nenhum evento registrado.</string>
+    <string name="evento_criado">Documento criado por %1$s</string>
+    <string name="evento_enviado">Enviado para assinatura por %1$s</string>
+    <string name="evento_assinado">Assinado por %1$s</string>
+    <string name="evento_concluido">Todas as assinaturas obrigatórias foram coletadas</string>
+    <string name="evento_nova_versao">Nova versão criada por %1$s</string>
+    <string name="visualizador_final">PDF final assinado</string>
 </resources>

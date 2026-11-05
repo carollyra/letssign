@@ -274,6 +274,49 @@ class DocumentoRepositoryLocal @Inject constructor(
         ResultadoRegistroAssinatura.Registrada(status, caminhoSubstituido = documento.caminhoAtual)
     }
 
+    override suspend fun criarNovaVersao(
+        documentoId: Long,
+        adminId: Long,
+        arquivo: ArquivoPdf,
+        agora: Long,
+    ): Long = banco.withTransaction {
+        val origem = documentoDao.buscarDoAdmin(documentoId, adminId)
+            ?: throw DocumentoNaoEncontradoException()
+        check(origem.status != StatusDocumento.RASCUNHO) { "Rascunho não gera nova versão" }
+
+        val novoId = documentoDao.inserir(
+            origem.copy(
+                id = 0,
+                nomeArquivo = arquivo.nomeArquivo,
+                caminhoOriginal = arquivo.caminho,
+                caminhoAtual = arquivo.caminho,
+                totalPaginas = arquivo.totalPaginas,
+                status = StatusDocumento.RASCUNHO,
+                versao = origem.versao + 1,
+                documentoOrigemId = origem.id,
+                criadoEm = agora,
+                enviadoEm = null,
+                concluidoEm = null,
+            ),
+        )
+        vinculoDao.listarDoDocumento(documentoId).forEach { vinculo ->
+            val novoVinculoId = vinculoDao.inserir(
+                DocumentoSignatarioEntity(
+                    documentoId = novoId,
+                    signatarioId = vinculo.signatarioId,
+                    papel = vinculo.papel,
+                    obrigatorio = vinculo.obrigatorio,
+                ),
+            )
+            campoDao.inserir(
+                campoDao.listarDoVinculo(vinculo.id).map { it.copy(id = 0, documentoSignatarioId = novoVinculoId) },
+            )
+        }
+        registrarEvento(novoId, TipoEvento.CRIADO, adminId, agora)
+        registrarEvento(documentoId, TipoEvento.NOVA_VERSAO, adminId, agora)
+        novoId
+    }
+
     private suspend fun rascunhoDoAdmin(documentoId: Long, adminId: Long): DocumentoEntity {
         val documento = documentoDao.buscarDoAdmin(documentoId, adminId)
             ?: throw DocumentoNaoEncontradoException()

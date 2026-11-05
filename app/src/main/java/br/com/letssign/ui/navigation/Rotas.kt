@@ -13,6 +13,8 @@ object Rotas {
     const val DOCUMENTO_CAMPOS = "documento/{$ARG_DOCUMENTO_ID}/campos"
     const val DOCUMENTO_REVISAO = "documento/{$ARG_DOCUMENTO_ID}/revisao"
     const val DOCUMENTO_ASSINATURA = "documento/{$ARG_DOCUMENTO_ID}/assinatura"
+    const val DOCUMENTO_ACOMPANHAMENTO = "documento/{$ARG_DOCUMENTO_ID}/acompanhamento"
+    const val DOCUMENTO_PDF = "documento/{$ARG_DOCUMENTO_ID}/pdf"
 
     fun signatarioForm(id: Long? = null) = "signatarios/form?$ARG_SIGNATARIO_ID=${id ?: 0}"
 
@@ -25,4 +27,8 @@ object Rotas {
     fun documentoRevisao(id: Long) = "documento/$id/revisao"
 
     fun documentoAssinatura(id: Long) = "documento/$id/assinatura"
+
+    fun documentoAcompanhamento(id: Long) = "documento/$id/acompanhamento"
+
+    fun documentoPdf(id: Long) = "documento/$id/pdf"
 }

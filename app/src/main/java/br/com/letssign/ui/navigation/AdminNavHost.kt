@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.letssign.domain.model.Usuario
+import br.com.letssign.ui.acompanhamento.AcompanhamentoScreen
+import br.com.letssign.ui.acompanhamento.VisualizadorPdfScreen
 import br.com.letssign.ui.campos.PosicionamentoCamposScreen
 import br.com.letssign.ui.documento.NovoDocumentoScreen
 import br.com.letssign.ui.documento.SelecaoSignatariosScreen
@@ -28,7 +30,13 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
                 onSignatarios = { navController.navigate(Rotas.SIGNATARIOS) },
                 onNovoDocumento = { navController.navigate(Rotas.documentoArquivo()) },
                 onAbrirDocumento = { documento ->
-                    if (documento.editavel) navController.navigate(Rotas.documentoArquivo(documento.id))
+                    navController.navigate(
+                        if (documento.editavel) {
+                            Rotas.documentoArquivo(documento.id)
+                        } else {
+                            Rotas.documentoAcompanhamento(documento.id)
+                        },
+                    )
                 },
             )
         }
@@ -81,8 +89,26 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
             RevisaoScreen(
                 onVoltar = navController::popBackStack,
                 onConcluir = { navController.popBackStack(Rotas.HOME, inclusive = false) },
-                onAcompanhar = { navController.popBackStack(Rotas.HOME, inclusive = false) },
+                onAcompanhar = { id ->
+                    navController.navigate(Rotas.documentoAcompanhamento(id)) {
+                        popUpTo(Rotas.HOME)
+                    }
+                },
             )
+        }
+        composable(route = Rotas.DOCUMENTO_ACOMPANHAMENTO, arguments = listOf(argumentoDocumento)) {
+            AcompanhamentoScreen(
+                onVoltar = navController::popBackStack,
+                onAbrirPdf = { navController.navigate(Rotas.documentoPdf(it)) },
+                onEditarRascunho = { id ->
+                    navController.navigate(Rotas.documentoArquivo(id)) {
+                        popUpTo(Rotas.HOME)
+                    }
+                },
+            )
+        }
+        composable(route = Rotas.DOCUMENTO_PDF, arguments = listOf(argumentoDocumento)) {
+            VisualizadorPdfScreen(onVoltar = navController::popBackStack)
         }
     }
 }
