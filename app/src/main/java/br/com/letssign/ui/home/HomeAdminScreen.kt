@@ -13,12 +13,15 @@ import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.EstadoVazio
 
 @Composable
-fun HomeAdminScreen(usuario: Usuario, onSair: () -> Unit) {
+fun HomeAdminScreen(usuario: Usuario, onSair: () -> Unit, onSignatarios: () -> Unit) {
     Scaffold(
         topBar = {
             BarraSuperior(
                 titulo = stringResource(R.string.home_admin_titulo),
                 acoes = {
+                    TextButton(onClick = onSignatarios) {
+                        Text(stringResource(R.string.signatarios_titulo))
+                    }
                     TextButton(onClick = onSair) { Text(stringResource(R.string.acao_sair)) }
                 },
             )

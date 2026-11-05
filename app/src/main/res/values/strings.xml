@@ -7,10 +7,17 @@
     <string name="acao_sair">Sair</string>
     <string name="acao_mostrar">Mostrar</string>
     <string name="acao_ocultar">Ocultar</string>
+    <string name="acao_editar">Editar</string>
+    <string name="acao_salvar">Salvar</string>
+    <string name="acao_salvando">Salvando…</string>
     <string name="erro_inesperado">Algo deu errado. Tente novamente.</string>
+    <string name="erro_sem_permissao">Você não tem permissão para fazer isso.</string>
 
     <string name="campo_email">E-mail</string>
     <string name="campo_senha">Senha</string>
+    <string name="campo_nova_senha">Nova senha</string>
+    <string name="campo_nome_completo">Nome completo</string>
+    <string name="campo_telefone">Telefone</string>
 
     <string name="login_subtitulo">Assinatura de documentos</string>
     <string name="login_entrar">Entrar</string>
@@ -23,4 +30,21 @@
     <string name="home_admin_vazio">Você ainda não criou nenhum documento.</string>
     <string name="home_signatario_titulo">Meus documentos</string>
     <string name="home_signatario_vazio">Nenhum documento foi enviado para você ainda.</string>
+
+    <string name="signatarios_titulo">Signatários</string>
+    <string name="signatarios_novo">Novo signatário</string>
+    <string name="signatarios_vazio_titulo">Nenhum signatário cadastrado</string>
+    <string name="signatarios_vazio_descricao">Cadastre as pessoas que vão assinar os documentos.</string>
+    <string name="signatarios_erro_carregar">Não foi possível carregar os signatários.</string>
+    <string name="signatario_novo_titulo">Novo signatário</string>
+    <string name="signatario_editar_titulo">Editar signatário</string>
+    <string name="signatario_dica_email">Usado pelo signatário para entrar no app.</string>
+    <string name="signatario_dica_telefone">Com DDD, por exemplo (11) 99999-0000.</string>
+    <string name="signatario_dica_senha">Mínimo de %1$d caracteres, sem espaços.</string>
+    <string name="signatario_dica_senha_edicao">Deixe em branco para manter a senha atual.</string>
+    <string name="signatario_erro_nome">Informe nome e sobrenome.</string>
+    <string name="signatario_erro_email_duplicado">Já existe um cadastro com este e-mail.</string>
+    <string name="signatario_erro_telefone">Informe um telefone com DDD.</string>
+    <string name="signatario_erro_senha">A senha precisa ter ao menos %1$d caracteres, sem espaços.</string>
+    <string name="signatario_erro_nao_encontrado">Signatário não encontrado.</string>
 </resources>
