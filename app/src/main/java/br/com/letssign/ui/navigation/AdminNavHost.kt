@@ -11,6 +11,7 @@ import br.com.letssign.ui.campos.PosicionamentoCamposScreen
 import br.com.letssign.ui.documento.NovoDocumentoScreen
 import br.com.letssign.ui.documento.SelecaoSignatariosScreen
 import br.com.letssign.ui.home.HomeAdminScreen
+import br.com.letssign.ui.revisao.RevisaoScreen
 import br.com.letssign.ui.signatarios.SignatarioFormScreen
 import br.com.letssign.ui.signatarios.SignatariosScreen
 
@@ -73,7 +74,14 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
         composable(route = Rotas.DOCUMENTO_CAMPOS, arguments = listOf(argumentoDocumento)) {
             PosicionamentoCamposScreen(
                 onVoltar = navController::popBackStack,
-                onProximaEtapa = { navController.popBackStack(Rotas.HOME, inclusive = false) },
+                onProximaEtapa = { navController.navigate(Rotas.documentoRevisao(it)) },
+            )
+        }
+        composable(route = Rotas.DOCUMENTO_REVISAO, arguments = listOf(argumentoDocumento)) {
+            RevisaoScreen(
+                onVoltar = navController::popBackStack,
+                onConcluir = { navController.popBackStack(Rotas.HOME, inclusive = false) },
+                onAcompanhar = { navController.popBackStack(Rotas.HOME, inclusive = false) },
             )
         }
     }

@@ -36,7 +36,11 @@
     <string name="filtro_todos">Todos (%1$d)</string>
     <string name="filtro_com_total">%1$s (%2$d)</string>
     <string name="home_signatario_titulo">Meus documentos</string>
-    <string name="home_signatario_vazio">Nenhum documento foi enviado para você ainda.</string>
+    <string name="home_signatario_pendentes">Pendentes</string>
+    <string name="home_signatario_assinados">Assinados</string>
+    <string name="home_signatario_vazio_pendentes">Nenhum documento aguardando a sua assinatura.</string>
+    <string name="home_signatario_vazio_assinados">Você ainda não assinou nenhum documento.</string>
+    <string name="home_signatario_papel">Você assina como %1$s</string>
 
     <string name="signatarios_titulo">Signatários</string>
     <string name="signatarios_novo">Novo signatário</string>
@@ -69,6 +73,8 @@
     <string name="documento_arquivo_versao">%1$s · versão %2$d</string>
     <string name="documento_criado_em">Criado em %1$s</string>
     <string name="documento_enviado_em">Enviado em %1$s</string>
+    <string name="documento_recebido_em">Recebido em %1$s</string>
+    <string name="documento_assinado_em">Assinado em %1$s</string>
     <string name="documento_novo_titulo">Novo documento</string>
     <string name="documento_nenhum_pdf">Nenhum PDF selecionado.</string>
     <string name="documento_selecionar_pdf">Selecionar PDF</string>
@@ -125,4 +131,34 @@
         <item quantity="one">%1$d campo</item>
         <item quantity="other">%1$d campos</item>
     </plurals>
+
+    <string name="revisao_titulo">Revisão e envio</string>
+    <string name="revisao_mensagem">Mensagem do convite</string>
+    <string name="revisao_mensagem_padrao">Olá! Você recebeu um documento para assinar pelo LetsSign. Abra o app, confira o conteúdo e assine nos campos indicados.</string>
+    <string name="revisao_sem_campos">Nenhum campo de assinatura</string>
+    <plurals name="revisao_campos_nas_paginas">
+        <item quantity="one">%1$d campo (página %2$s)</item>
+        <item quantity="other">%1$d campos (páginas %2$s)</item>
+    </plurals>
+    <string name="revisao_enviar">Enviar para assinatura</string>
+    <string name="revisao_enviando">Enviando…</string>
+    <string name="revisao_problemas_titulo">Antes de enviar, corrija:</string>
+    <string name="revisao_falha_titulo">O envio não foi concluído</string>
+    <string name="revisao_falha_envio">Nenhum convite foi criado e o documento continua como rascunho. Confira a conexão e toque em “Tentar novamente”; o envio não será duplicado.</string>
+    <string name="revisao_enviado_titulo">Documento enviado</string>
+    <plurals name="revisao_enviado_descricao">
+        <item quantity="one">“%1$s” já está disponível para %2$d signatário assinar.</item>
+        <item quantity="other">“%1$s” já está disponível para %2$d signatários assinarem.</item>
+    </plurals>
+    <string name="revisao_acompanhar">Acompanhar documento</string>
+    <string name="revisao_voltar_inicio">Voltar ao início</string>
+
+    <string name="envio_erro_titulo">Informe o título do documento.</string>
+    <string name="envio_erro_arquivo">Selecione o PDF do documento.</string>
+    <string name="envio_erro_mensagem">Escreva a mensagem do convite.</string>
+    <string name="envio_erro_sem_signatarios">Selecione ao menos um signatário.</string>
+    <string name="envio_erro_sem_campo">Adicione ao menos um campo de assinatura para: %1$s.</string>
+    <string name="envio_erro_campo_sem_dono">Há campos sem signatário válido em: %1$s.</string>
+    <string name="envio_erro_campo_fora">Há campos fora dos limites da página em: %1$s.</string>
+    <string name="envio_erro_pagina">Há campos em páginas que não existem em: %1$s.</string>
 </resources>

@@ -11,11 +11,18 @@ import br.com.letssign.data.repository.SignatarioRepositoryLocal
 import br.com.letssign.data.seguranca.HashSenha
 import br.com.letssign.data.sessao.ArmazenamentoSessao
 import br.com.letssign.domain.Relogio
+import br.com.letssign.domain.envio.EnvioGateway
+import br.com.letssign.domain.envio.FalhaNoEnvioException
+import br.com.letssign.domain.envio.SolicitacaoEnvio
 import br.com.letssign.domain.model.ArquivoPdf
+import br.com.letssign.domain.model.PapelSignatario
 import br.com.letssign.domain.model.Perfil
 import br.com.letssign.domain.model.Usuario
+import br.com.letssign.domain.regra.AreaNormalizada
 import br.com.letssign.domain.repository.ArmazenamentoPdf
+import br.com.letssign.domain.repository.NovoCampo
 import br.com.letssign.domain.repository.ResultadoImportacao
+import br.com.letssign.domain.repository.SelecaoSignatario
 import br.com.letssign.domain.usecase.ObterUsuarioLogadoUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +39,7 @@ class AmbienteDeTeste {
     val sessao = SessaoEmMemoria()
     val relogio = RelogioFalso()
     val armazenamento = ArmazenamentoFalso()
+    val gateway = GatewayFalso()
 
     private val dispatcher = UnconfinedTestDispatcher()
     private val hash = HashSenha()
@@ -74,6 +82,31 @@ class AmbienteDeTeste {
     fun arquivo(nome: String = "contrato.pdf", paginas: Int = 2) =
         ArquivoPdf(nomeArquivo = nome, caminho = "/documentos/$nome", totalPaginas = paginas)
 
+    /** Rascunho que cumpre todas as regras de envio: cada signatário com um campo na primeira página. */
+    suspend fun rascunhoPronto(
+        admin: Usuario,
+        vararg signatarios: Usuario,
+        titulo: String = "Contrato",
+        obrigatorios: Set<Long> = signatarios.map { it.id }.toSet(),
+    ): Long {
+        val id = documentos.criarRascunho(admin.id, titulo, arquivo(), relogio.agora())
+        documentos.definirSignatarios(
+            id,
+            admin.id,
+            signatarios.map {
+                SelecaoSignatario(it.id, PapelSignatario.CONTRATANTE, obrigatorio = it.id in obrigatorios)
+            },
+        )
+        documentos.salvarCampos(
+            id,
+            admin.id,
+            signatarios.mapIndexed { indice, signatario ->
+                NovoCampo(signatario.id, 0, AreaNormalizada(0.1f, 0.1f + indice * 0.15f, 0.3f, 0.1f))
+            },
+        )
+        return id
+    }
+
     fun fechar() = banco.close()
 }
 
@@ -105,5 +138,19 @@ class ArmazenamentoFalso : ArmazenamentoPdf {
 
     override suspend fun remover(caminho: String) {
         removidos += caminho
+    }
+}
+
+class GatewayFalso : EnvioGateway {
+    /** Quantas das próximas chamadas devem falhar. */
+    var falhasRestantes = 0
+    val solicitacoes = mutableListOf<SolicitacaoEnvio>()
+
+    override suspend fun enviar(solicitacao: SolicitacaoEnvio) {
+        solicitacoes += solicitacao
+        if (falhasRestantes > 0) {
+            falhasRestantes--
+            throw FalhaNoEnvioException("sem conexão")
+        }
     }
 }

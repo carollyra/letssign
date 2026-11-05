@@ -11,6 +11,9 @@ import br.com.letssign.data.local.paraDominio
 import br.com.letssign.domain.model.ArquivoPdf
 import br.com.letssign.domain.model.Documento
 import br.com.letssign.domain.model.DocumentoDetalhado
+import br.com.letssign.domain.model.DocumentoDoSignatario
+import br.com.letssign.domain.model.EnvioInvalidoException
+import br.com.letssign.domain.model.EventoDetalhado
 import br.com.letssign.domain.model.DocumentoNaoEditavelException
 import br.com.letssign.domain.model.DocumentoNaoEncontradoException
 import br.com.letssign.domain.model.Perfil
@@ -18,8 +21,10 @@ import br.com.letssign.domain.model.SignatarioDoDocumento
 import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.domain.model.TipoEvento
 import br.com.letssign.domain.regra.GeometriaCampo
+import br.com.letssign.domain.regra.ValidadorEnvio
 import br.com.letssign.domain.repository.DocumentoRepository
 import br.com.letssign.domain.repository.NovoCampo
+import br.com.letssign.domain.repository.ResultadoRegistroEnvio
 import br.com.letssign.domain.repository.SelecaoSignatario
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -169,6 +174,53 @@ class DocumentoRepositoryLocal @Inject constructor(
         campoDao.excluirDoDocumento(documentoId)
         campoDao.inserir(novos)
     }
+
+    override suspend fun salvarMensagemConvite(documentoId: Long, adminId: Long, mensagem: String) =
+        banco.withTransaction {
+            val rascunho = rascunhoDoAdmin(documentoId, adminId)
+            documentoDao.atualizar(rascunho.copy(mensagemConvite = mensagem))
+        }
+
+    override suspend fun registrarEnvio(
+        documentoId: Long,
+        adminId: Long,
+        mensagemConvite: String,
+        agora: Long,
+    ): ResultadoRegistroEnvio = banco.withTransaction {
+        val documento = documentoDao.buscarDoAdmin(documentoId, adminId)
+            ?: throw DocumentoNaoEncontradoException()
+        if (documento.status != StatusDocumento.RASCUNHO) {
+            return@withTransaction ResultadoRegistroEnvio.JA_ESTAVA_REGISTRADO
+        }
+
+        val vinculos = vinculoDao.listarDoDocumento(documentoId)
+        val detalhe = montarDetalhe(
+            documento = documento,
+            vinculos = vinculos,
+            campos = campoDao.listarDoDocumento(documentoId),
+            usuarios = usuarioDao.buscarPorIds(vinculos.map { it.signatarioId }),
+        )
+        val problemas = ValidadorEnvio.validar(detalhe, mensagemConvite)
+        if (problemas.isNotEmpty()) throw EnvioInvalidoException(problemas)
+
+        documentoDao.atualizar(
+            documento.copy(
+                status = StatusDocumento.ENVIADO,
+                mensagemConvite = mensagemConvite,
+                enviadoEm = agora,
+            ),
+        )
+        registrarEvento(documentoId, TipoEvento.ENVIADO, adminId, agora)
+        ResultadoRegistroEnvio.REGISTRADO
+    }
+
+    override fun observarEventos(documentoId: Long, adminId: Long): Flow<List<EventoDetalhado>> =
+        eventoDao.observarDoDocumento(documentoId, adminId).map { lista -> lista.map { it.paraDominio() } }
+
+    override fun observarDoSignatario(signatarioId: Long): Flow<List<DocumentoDoSignatario>> =
+        documentoDao.observarEnviadosAoSignatario(signatarioId).map { lista ->
+            lista.map { DocumentoDoSignatario(it.documento.paraDominio(), it.vinculo.paraDominio()) }
+        }
 
     private suspend fun rascunhoDoAdmin(documentoId: Long, adminId: Long): DocumentoEntity {
         val documento = documentoDao.buscarDoAdmin(documentoId, adminId)

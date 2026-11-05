@@ -13,7 +13,7 @@ fun SignatarioNavHost(usuario: Usuario, onSair: () -> Unit) {
 
     NavHost(navController = navController, startDestination = Rotas.HOME) {
         composable(Rotas.HOME) {
-            HomeSignatarioScreen(usuario = usuario, onSair = onSair)
+            HomeSignatarioScreen(usuario = usuario, onSair = onSair, onAbrirDocumento = {})
         }
     }
 }

@@ -3,6 +3,8 @@ package br.com.letssign.domain.repository
 import br.com.letssign.domain.model.ArquivoPdf
 import br.com.letssign.domain.model.Documento
 import br.com.letssign.domain.model.DocumentoDetalhado
+import br.com.letssign.domain.model.DocumentoDoSignatario
+import br.com.letssign.domain.model.EventoDetalhado
 import br.com.letssign.domain.model.PapelSignatario
 import br.com.letssign.domain.regra.AreaNormalizada
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +20,8 @@ data class NovoCampo(
     val pagina: Int,
     val area: AreaNormalizada,
 )
+
+enum class ResultadoRegistroEnvio { REGISTRADO, JA_ESTAVA_REGISTRADO }
 
 /**
  * Todas as operações recebem quem está consultando. Um documento de outro Admin se comporta
@@ -57,4 +61,26 @@ interface DocumentoRepository {
      * ultrapassar os limites da página.
      */
     suspend fun salvarCampos(documentoId: Long, adminId: Long, campos: List<NovoCampo>)
+
+    suspend fun salvarMensagemConvite(documentoId: Long, adminId: Long, mensagem: String)
+
+    /**
+     * Passa o rascunho para enviado numa única transação. Chamar de novo para um documento
+     * que já saiu não altera nada e devolve [ResultadoRegistroEnvio.JA_ESTAVA_REGISTRADO].
+     *
+     * As regras de envio são conferidas de novo dentro da transação; se alguma falhar, lança
+     * [br.com.letssign.domain.model.EnvioInvalidoException].
+     */
+    suspend fun registrarEnvio(
+        documentoId: Long,
+        adminId: Long,
+        mensagemConvite: String,
+        agora: Long,
+    ): ResultadoRegistroEnvio
+
+    /** Histórico do documento, do evento mais antigo para o mais recente. */
+    fun observarEventos(documentoId: Long, adminId: Long): Flow<List<EventoDetalhado>>
+
+    /** Documentos enviados ao signatário. Rascunhos nunca aparecem. */
+    fun observarDoSignatario(signatarioId: Long): Flow<List<DocumentoDoSignatario>>
 }
