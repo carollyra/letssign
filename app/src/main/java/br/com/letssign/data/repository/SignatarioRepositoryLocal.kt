@@ -1,7 +1,7 @@
 package br.com.letssign.data.repository
 
 import android.database.sqlite.SQLiteConstraintException
-import br.com.letssign.data.di.DispatcherPadrao
+import br.com.letssign.di.DispatcherPadrao
 import br.com.letssign.data.local.dao.UsuarioDao
 import br.com.letssign.data.local.entity.UsuarioEntity
 import br.com.letssign.data.local.paraDominio

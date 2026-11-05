@@ -4,11 +4,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import br.com.letssign.data.local.LetsSignDatabase
+import br.com.letssign.apoio.SessaoEmMemoria
 import br.com.letssign.data.seguranca.HashSenha
-import br.com.letssign.data.sessao.ArmazenamentoSessao
 import br.com.letssign.domain.model.Perfil
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -97,18 +95,5 @@ class AutenticacaoRepositoryLocalTest {
         repositorio.sair()
 
         assertNull(repositorio.usuarioLogado.first())
-    }
-}
-
-class SessaoEmMemoria : ArmazenamentoSessao {
-    private val id = MutableStateFlow<Long?>(null)
-    override val usuarioId: Flow<Long?> = id
-
-    override suspend fun salvar(usuarioId: Long) {
-        id.value = usuarioId
-    }
-
-    override suspend fun limpar() {
-        id.value = null
     }
 }

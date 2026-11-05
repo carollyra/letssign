@@ -11,8 +11,13 @@ data class DocumentoDetalhado(
     val signatarios: List<SignatarioDoDocumento>,
 )
 
-/** Visão que o signatário tem de um documento: só o próprio vínculo e os próprios campos. */
+/** Visão que o signatário tem de um documento: só o próprio vínculo, nunca o dos outros. */
 data class DocumentoDoSignatario(
+    val documento: Documento,
+    val vinculo: DocumentoSignatario,
+)
+
+data class DocumentoParaAssinar(
     val documento: Documento,
     val vinculo: DocumentoSignatario,
     val campos: List<CampoAssinatura>,

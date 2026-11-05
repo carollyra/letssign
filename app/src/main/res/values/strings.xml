@@ -10,6 +10,7 @@
     <string name="acao_editar">Editar</string>
     <string name="acao_salvar">Salvar</string>
     <string name="acao_salvando">Salvando…</string>
+    <string name="acao_continuar">Continuar</string>
     <string name="erro_inesperado">Algo deu errado. Tente novamente.</string>
     <string name="erro_sem_permissao">Você não tem permissão para fazer isso.</string>
 
@@ -18,6 +19,7 @@
     <string name="campo_nova_senha">Nova senha</string>
     <string name="campo_nome_completo">Nome completo</string>
     <string name="campo_telefone">Telefone</string>
+    <string name="campo_titulo">Título do documento</string>
 
     <string name="login_subtitulo">Assinatura de documentos</string>
     <string name="login_entrar">Entrar</string>
@@ -28,6 +30,11 @@
     <string name="home_saudacao">Olá, %1$s</string>
     <string name="home_admin_titulo">Documentos</string>
     <string name="home_admin_vazio">Você ainda não criou nenhum documento.</string>
+    <string name="home_admin_vazio_dica">Toque em “Novo documento” para enviar um PDF para assinatura.</string>
+    <string name="home_admin_vazio_filtro">Nenhum documento nesta situação.</string>
+    <string name="home_admin_novo_documento">Novo documento</string>
+    <string name="filtro_todos">Todos (%1$d)</string>
+    <string name="filtro_com_total">%1$s (%2$d)</string>
     <string name="home_signatario_titulo">Meus documentos</string>
     <string name="home_signatario_vazio">Nenhum documento foi enviado para você ainda.</string>
 
@@ -47,4 +54,58 @@
     <string name="signatario_erro_telefone">Informe um telefone com DDD.</string>
     <string name="signatario_erro_senha">A senha precisa ter ao menos %1$d caracteres, sem espaços.</string>
     <string name="signatario_erro_nao_encontrado">Signatário não encontrado.</string>
+
+    <string name="status_rascunho">Rascunho</string>
+    <string name="status_enviado">Enviado</string>
+    <string name="status_parcialmente_assinado">Parcialmente assinado</string>
+    <string name="status_concluido">Concluído</string>
+    <string name="papel_contratante">Contratante</string>
+    <string name="papel_contratado">Contratado</string>
+    <string name="papel_testemunha">Testemunha</string>
+    <string name="assinatura_pendente">Pendente</string>
+    <string name="assinatura_assinado">Assinou</string>
+
+    <string name="documentos_erro_carregar">Não foi possível carregar os documentos.</string>
+    <string name="documento_arquivo_versao">%1$s · versão %2$d</string>
+    <string name="documento_criado_em">Criado em %1$s</string>
+    <string name="documento_enviado_em">Enviado em %1$s</string>
+    <string name="documento_novo_titulo">Novo documento</string>
+    <string name="documento_nenhum_pdf">Nenhum PDF selecionado.</string>
+    <string name="documento_selecionar_pdf">Selecionar PDF</string>
+    <string name="documento_trocar_pdf">Trocar PDF</string>
+    <string name="documento_verificando_pdf">Verificando o arquivo…</string>
+    <string name="documento_erro_titulo">Informe um título com até 120 caracteres.</string>
+    <string name="documento_erro_sem_arquivo">Selecione o PDF que será assinado.</string>
+    <string name="documento_erro_nao_encontrado">Documento não encontrado.</string>
+    <string name="documento_erro_ja_enviado">Este documento já foi enviado e não pode mais ser alterado. Para mudar algo, crie uma nova versão.</string>
+    <plurals name="documento_paginas">
+        <item quantity="one">%1$d página</item>
+        <item quantity="other">%1$d páginas</item>
+    </plurals>
+
+    <string name="etapa_posicao">Etapa %1$d de %2$d · %3$s</string>
+    <string name="etapa_arquivo">Documento</string>
+    <string name="etapa_signatarios">Signatários</string>
+    <string name="etapa_campos">Campos de assinatura</string>
+    <string name="etapa_revisao">Revisão e envio</string>
+
+    <string name="pdf_pagina">Página %1$d do documento</string>
+    <string name="pdf_erro_pagina">Não foi possível exibir esta página.</string>
+    <string name="pdf_erro_abrir">Não foi possível abrir o PDF.</string>
+    <string name="pdf_erro_nao_e_pdf">O arquivo escolhido não é um PDF válido. Escolha outro arquivo.</string>
+    <string name="pdf_erro_corrompido">O PDF está corrompido e não pôde ser aberto. Escolha outro arquivo.</string>
+    <string name="pdf_erro_protegido">O PDF está protegido por senha e não pode ser usado. Remova a proteção ou escolha outro arquivo.</string>
+    <string name="pdf_erro_sem_paginas">O PDF não tem páginas ou está incompleto. Escolha outro arquivo.</string>
+    <string name="pdf_erro_muito_grande">O PDF é grande demais para ser processado (limite de 50 MB). Escolha outro arquivo.</string>
+    <string name="pdf_erro_leitura">Não foi possível ler o arquivo. Tente novamente ou escolha outro.</string>
+
+    <string name="selecao_titulo">Quem vai assinar</string>
+    <string name="selecao_instrucao">Marque os signatários e escolha o papel de cada um.</string>
+    <string name="selecao_vazio_descricao">Cadastre ao menos um signatário para continuar.</string>
+    <string name="selecao_cadastrar">Cadastrar signatário</string>
+    <string name="selecao_erro_minimo">Selecione ao menos um signatário.</string>
+    <plurals name="selecao_total">
+        <item quantity="one">%1$d selecionado</item>
+        <item quantity="other">%1$d selecionados</item>
+    </plurals>
 </resources>

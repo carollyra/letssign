@@ -1,6 +1,6 @@
 package br.com.letssign.data.repository
 
-import br.com.letssign.data.di.DispatcherPadrao
+import br.com.letssign.di.DispatcherPadrao
 import br.com.letssign.data.local.dao.UsuarioDao
 import br.com.letssign.data.local.entity.UsuarioEntity
 import br.com.letssign.data.seguranca.HashSenha

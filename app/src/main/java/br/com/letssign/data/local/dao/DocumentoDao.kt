@@ -57,9 +57,6 @@ interface DocumentoDao {
     )
     suspend fun buscarEnviadoAoSignatario(id: Long, signatarioId: Long): DocumentoComVinculo?
 
-    @Query("DELETE FROM documentos WHERE id = :id AND adminId = :adminId AND status = 'RASCUNHO'")
-    suspend fun excluirRascunho(id: Long, adminId: Long): Int
-
     private companion object {
         const val COLUNAS_VINCULO =
             "v.id AS v_id, v.documentoId AS v_documentoId, v.signatarioId AS v_signatarioId, " +

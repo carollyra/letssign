@@ -3,10 +3,10 @@ package br.com.letssign.domain.usecase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import br.com.letssign.apoio.SessaoEmMemoria
 import br.com.letssign.data.local.LetsSignDatabase
 import br.com.letssign.data.repository.AdminPadrao
 import br.com.letssign.data.repository.AutenticacaoRepositoryLocal
-import br.com.letssign.data.repository.SessaoEmMemoria
 import br.com.letssign.data.repository.SignatarioRepositoryLocal
 import br.com.letssign.data.seguranca.HashSenha
 import br.com.letssign.domain.model.Perfil
