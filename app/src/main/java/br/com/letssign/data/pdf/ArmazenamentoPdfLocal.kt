@@ -16,22 +16,19 @@ import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.IOException
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 class ArmazenamentoPdfLocal @Inject constructor(
     @ApplicationContext private val contexto: Context,
+    private val pastaDocumentos: PastaDocumentos,
     @DispatcherIo private val dispatcher: CoroutineDispatcher,
 ) : ArmazenamentoPdf {
 
-    private val pasta: File
-        get() = File(contexto.filesDir, PASTA).apply { mkdirs() }
-
     override suspend fun importar(origem: String): ResultadoImportacao = withContext(dispatcher) {
         val uri = Uri.parse(origem)
-        val destino = novoArquivo()
+        val destino = pastaDocumentos.novoArquivo()
         try {
             if (!copiar(uri, destino)) {
                 return@withContext falha(destino, MotivoFalhaPdf.NAO_FOI_POSSIVEL_LER)
@@ -55,7 +52,7 @@ class ArmazenamentoPdfLocal @Inject constructor(
     }
 
     override suspend fun duplicar(caminho: String): String = withContext(dispatcher) {
-        val copia = novoArquivo()
+        val copia = pastaDocumentos.novoArquivo()
         File(caminho).copyTo(copia, overwrite = true)
         copia.absolutePath
     }
@@ -64,11 +61,9 @@ class ArmazenamentoPdfLocal @Inject constructor(
         withContext(dispatcher) {
             val arquivo = File(caminho)
             // Só apaga o que está na pasta de documentos do app.
-            if (arquivo.parentFile == pasta) arquivo.delete()
+            if (pastaDocumentos.contem(arquivo)) arquivo.delete()
         }
     }
-
-    private fun novoArquivo() = File(pasta, "${UUID.randomUUID()}.pdf")
 
     private fun falha(arquivo: File, motivo: MotivoFalhaPdf): ResultadoImportacao {
         arquivo.delete()
@@ -157,7 +152,6 @@ class ArmazenamentoPdfLocal @Inject constructor(
     }
 
     private companion object {
-        const val PASTA = "documentos"
         const val NOME_PADRAO = "documento.pdf"
         const val TAMANHO_MAXIMO_BYTES = 50L * 1024 * 1024
 

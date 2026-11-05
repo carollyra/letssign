@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 class ArmazenamentoPdfLocalTest {
 
     private val contexto: Context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val armazenamento = ArmazenamentoPdfLocal(contexto, Dispatchers.IO)
+    private val armazenamento = ArmazenamentoPdfLocal(contexto, PastaDocumentos(contexto), Dispatchers.IO)
     private val origem = File(contexto.cacheDir, "origem-teste")
     private val pastaDocumentos = File(contexto.filesDir, "documentos")
 

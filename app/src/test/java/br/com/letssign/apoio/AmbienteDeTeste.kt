@@ -15,11 +15,14 @@ import br.com.letssign.domain.envio.EnvioGateway
 import br.com.letssign.domain.envio.FalhaNoEnvioException
 import br.com.letssign.domain.envio.SolicitacaoEnvio
 import br.com.letssign.domain.model.ArquivoPdf
+import br.com.letssign.domain.model.CampoAssinatura
 import br.com.letssign.domain.model.PapelSignatario
 import br.com.letssign.domain.model.Perfil
 import br.com.letssign.domain.model.Usuario
 import br.com.letssign.domain.regra.AreaNormalizada
 import br.com.letssign.domain.repository.ArmazenamentoPdf
+import br.com.letssign.domain.repository.AssinadorPdf
+import br.com.letssign.domain.repository.FalhaAoAssinarPdfException
 import br.com.letssign.domain.repository.NovoCampo
 import br.com.letssign.domain.repository.ResultadoImportacao
 import br.com.letssign.domain.repository.SelecaoSignatario
@@ -40,6 +43,7 @@ class AmbienteDeTeste {
     val relogio = RelogioFalso()
     val armazenamento = ArmazenamentoFalso()
     val gateway = GatewayFalso()
+    val assinador = AssinadorFalso()
 
     private val dispatcher = UnconfinedTestDispatcher()
     private val hash = HashSenha()
@@ -152,5 +156,27 @@ class GatewayFalso : EnvioGateway {
             falhasRestantes--
             throw FalhaNoEnvioException("sem conexão")
         }
+    }
+}
+
+class AssinadorFalso : AssinadorPdf {
+    var falhar = false
+    val chamadas = mutableListOf<Chamada>()
+
+    /** Executado depois de gerar o arquivo e antes de devolvê-lo, para simular concorrência. */
+    var antesDeDevolver: (suspend () -> Unit)? = null
+
+    data class Chamada(val origem: String, val campos: List<CampoAssinatura>, val destino: String)
+
+    override suspend fun aplicar(
+        caminhoOrigem: String,
+        assinaturaPng: ByteArray,
+        campos: List<CampoAssinatura>,
+    ): String {
+        if (falhar) throw FalhaAoAssinarPdfException()
+        val destino = "/documentos/assinado-${chamadas.size + 1}.pdf"
+        chamadas += Chamada(caminhoOrigem, campos, destino)
+        antesDeDevolver?.also { antesDeDevolver = null }?.invoke()
+        return destino
     }
 }

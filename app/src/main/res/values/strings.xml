@@ -11,6 +11,7 @@
     <string name="acao_salvar">Salvar</string>
     <string name="acao_salvando">Salvando…</string>
     <string name="acao_continuar">Continuar</string>
+    <string name="acao_cancelar">Cancelar</string>
     <string name="erro_inesperado">Algo deu errado. Tente novamente.</string>
     <string name="erro_sem_permissao">Você não tem permissão para fazer isso.</string>
 
@@ -161,4 +162,20 @@
     <string name="envio_erro_campo_sem_dono">Há campos sem signatário válido em: %1$s.</string>
     <string name="envio_erro_campo_fora">Há campos fora dos limites da página em: %1$s.</string>
     <string name="envio_erro_pagina">Há campos em páginas que não existem em: %1$s.</string>
+
+    <string name="assinatura_titulo">Documento</string>
+    <string name="assinatura_assine_aqui">Assine aqui</string>
+    <string name="assinatura_assinar">Assinar documento</string>
+    <string name="assinatura_gravando">Gravando a assinatura…</string>
+    <string name="assinatura_dialogo_titulo">Sua assinatura</string>
+    <string name="assinatura_dialogo_instrucao">Desenhe com o dedo no quadro abaixo. Ela será aplicada em todos os seus campos do documento.</string>
+    <string name="assinatura_area_descricao">Área para desenhar a assinatura</string>
+    <string name="assinatura_limpar">Limpar</string>
+    <string name="assinatura_confirmar">Confirmar</string>
+    <string name="assinatura_sucesso_titulo">Assinatura registrada</string>
+    <string name="assinatura_ja_assinado">Você já assinou este documento</string>
+    <string name="assinatura_erro_carregar">Este documento não está disponível para você.</string>
+    <string name="assinatura_erro_vazia">Desenhe a assinatura antes de confirmar.</string>
+    <string name="assinatura_erro_gravar">Não foi possível gravar a assinatura no PDF. Tente novamente.</string>
+    <string name="assinatura_erro_concluido">Este documento já foi concluído e não aceita novas assinaturas.</string>
 </resources>

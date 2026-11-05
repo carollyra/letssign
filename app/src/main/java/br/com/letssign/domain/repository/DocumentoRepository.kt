@@ -4,8 +4,10 @@ import br.com.letssign.domain.model.ArquivoPdf
 import br.com.letssign.domain.model.Documento
 import br.com.letssign.domain.model.DocumentoDetalhado
 import br.com.letssign.domain.model.DocumentoDoSignatario
+import br.com.letssign.domain.model.DocumentoParaAssinar
 import br.com.letssign.domain.model.EventoDetalhado
 import br.com.letssign.domain.model.PapelSignatario
+import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.domain.regra.AreaNormalizada
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +24,16 @@ data class NovoCampo(
 )
 
 enum class ResultadoRegistroEnvio { REGISTRADO, JA_ESTAVA_REGISTRADO }
+
+sealed interface ResultadoRegistroAssinatura {
+    /** [caminhoSubstituido] é o arquivo que deixou de ser a versão atual do documento. */
+    data class Registrada(val status: StatusDocumento, val caminhoSubstituido: String) : ResultadoRegistroAssinatura
+    data object JaAssinado : ResultadoRegistroAssinatura
+    data object DocumentoConcluido : ResultadoRegistroAssinatura
+
+    /** O documento mudou depois que a assinatura foi aplicada; é preciso aplicar de novo. */
+    data object ArquivoDesatualizado : ResultadoRegistroAssinatura
+}
 
 /**
  * Todas as operações recebem quem está consultando. Um documento de outro Admin se comporta
@@ -83,4 +95,20 @@ interface DocumentoRepository {
 
     /** Documentos enviados ao signatário. Rascunhos nunca aparecem. */
     fun observarDoSignatario(signatarioId: Long): Flow<List<DocumentoDoSignatario>>
+
+    /** Documento enviado ao signatário, só com os campos dele. `null` para rascunho ou documento alheio. */
+    suspend fun buscarParaAssinar(documentoId: Long, signatarioId: Long): DocumentoParaAssinar?
+
+    /**
+     * Marca o vínculo como assinado, troca o arquivo atual do documento por [caminhoAssinado]
+     * e recalcula a situação, tudo numa transação. [caminhoBase] é o arquivo sobre o qual a
+     * assinatura foi aplicada: se ele não for mais o atual, nada é gravado.
+     */
+    suspend fun registrarAssinatura(
+        documentoId: Long,
+        signatarioId: Long,
+        caminhoBase: String,
+        caminhoAssinado: String,
+        agora: Long,
+    ): ResultadoRegistroAssinatura
 }

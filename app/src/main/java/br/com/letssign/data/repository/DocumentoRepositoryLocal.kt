@@ -16,14 +16,18 @@ import br.com.letssign.domain.model.EnvioInvalidoException
 import br.com.letssign.domain.model.EventoDetalhado
 import br.com.letssign.domain.model.DocumentoNaoEditavelException
 import br.com.letssign.domain.model.DocumentoNaoEncontradoException
+import br.com.letssign.domain.model.DocumentoParaAssinar
 import br.com.letssign.domain.model.Perfil
 import br.com.letssign.domain.model.SignatarioDoDocumento
+import br.com.letssign.domain.model.StatusAssinatura
 import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.domain.model.TipoEvento
 import br.com.letssign.domain.regra.GeometriaCampo
+import br.com.letssign.domain.regra.SituacaoDocumento
 import br.com.letssign.domain.regra.ValidadorEnvio
 import br.com.letssign.domain.repository.DocumentoRepository
 import br.com.letssign.domain.repository.NovoCampo
+import br.com.letssign.domain.repository.ResultadoRegistroAssinatura
 import br.com.letssign.domain.repository.ResultadoRegistroEnvio
 import br.com.letssign.domain.repository.SelecaoSignatario
 import javax.inject.Inject
@@ -221,6 +225,54 @@ class DocumentoRepositoryLocal @Inject constructor(
         documentoDao.observarEnviadosAoSignatario(signatarioId).map { lista ->
             lista.map { DocumentoDoSignatario(it.documento.paraDominio(), it.vinculo.paraDominio()) }
         }
+
+    override suspend fun buscarParaAssinar(documentoId: Long, signatarioId: Long): DocumentoParaAssinar? =
+        banco.withTransaction {
+            documentoDao.buscarEnviadoAoSignatario(documentoId, signatarioId)?.let { encontrado ->
+                DocumentoParaAssinar(
+                    documento = encontrado.documento.paraDominio(),
+                    vinculo = encontrado.vinculo.paraDominio(),
+                    campos = campoDao.listarDoVinculo(encontrado.vinculo.id).map { it.paraDominio() },
+                )
+            }
+        }
+
+    override suspend fun registrarAssinatura(
+        documentoId: Long,
+        signatarioId: Long,
+        caminhoBase: String,
+        caminhoAssinado: String,
+        agora: Long,
+    ): ResultadoRegistroAssinatura = banco.withTransaction {
+        val (documento, vinculo) = documentoDao.buscarEnviadoAoSignatario(documentoId, signatarioId)
+            ?.let { it.documento to it.vinculo }
+            ?: throw DocumentoNaoEncontradoException()
+        when {
+            vinculo.status == StatusAssinatura.ASSINADO ->
+                return@withTransaction ResultadoRegistroAssinatura.JaAssinado
+            documento.status == StatusDocumento.CONCLUIDO ->
+                return@withTransaction ResultadoRegistroAssinatura.DocumentoConcluido
+            documento.caminhoAtual != caminhoBase ->
+                return@withTransaction ResultadoRegistroAssinatura.ArquivoDesatualizado
+        }
+
+        vinculoDao.atualizar(vinculo.copy(status = StatusAssinatura.ASSINADO, assinadoEm = agora))
+        registrarEvento(documentoId, TipoEvento.ASSINADO, signatarioId, agora)
+
+        val status = SituacaoDocumento.aposAssinaturas(
+            vinculoDao.listarDoDocumento(documentoId).map { it.paraDominio() },
+        )
+        val concluido = status == StatusDocumento.CONCLUIDO
+        documentoDao.atualizar(
+            documento.copy(
+                status = status,
+                caminhoAtual = caminhoAssinado,
+                concluidoEm = agora.takeIf { concluido },
+            ),
+        )
+        if (concluido) registrarEvento(documentoId, TipoEvento.CONCLUIDO, signatarioId, agora)
+        ResultadoRegistroAssinatura.Registrada(status, caminhoSubstituido = documento.caminhoAtual)
+    }
 
     private suspend fun rascunhoDoAdmin(documentoId: Long, adminId: Long): DocumentoEntity {
         val documento = documentoDao.buscarDoAdmin(documentoId, adminId)

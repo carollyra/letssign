@@ -2,12 +2,14 @@ package br.com.letssign.data.di
 
 import br.com.letssign.data.envio.EnvioGatewayLocal
 import br.com.letssign.data.pdf.ArmazenamentoPdfLocal
+import br.com.letssign.data.pdf.AssinadorPdfLocal
 import br.com.letssign.data.repository.AutenticacaoRepositoryLocal
 import br.com.letssign.data.repository.DocumentoRepositoryLocal
 import br.com.letssign.data.repository.SignatarioRepositoryLocal
 import br.com.letssign.domain.Relogio
 import br.com.letssign.domain.envio.EnvioGateway
 import br.com.letssign.domain.repository.ArmazenamentoPdf
+import br.com.letssign.domain.repository.AssinadorPdf
 import br.com.letssign.domain.repository.AutenticacaoRepository
 import br.com.letssign.domain.repository.DocumentoRepository
 import br.com.letssign.domain.repository.SignatarioRepository
@@ -37,6 +39,10 @@ abstract class RepositorioModule {
     @Binds
     @Singleton
     abstract fun armazenamentoPdf(impl: ArmazenamentoPdfLocal): ArmazenamentoPdf
+
+    @Binds
+    @Singleton
+    abstract fun assinadorPdf(impl: AssinadorPdfLocal): AssinadorPdf
 
     @Binds
     @Singleton
