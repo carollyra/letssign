@@ -4,12 +4,19 @@ import br.com.letssign.domain.model.ArquivoPdf
 import br.com.letssign.domain.model.Documento
 import br.com.letssign.domain.model.DocumentoDetalhado
 import br.com.letssign.domain.model.PapelSignatario
+import br.com.letssign.domain.regra.AreaNormalizada
 import kotlinx.coroutines.flow.Flow
 
 data class SelecaoSignatario(
     val signatarioId: Long,
     val papel: PapelSignatario,
     val obrigatorio: Boolean = true,
+)
+
+data class NovoCampo(
+    val signatarioId: Long,
+    val pagina: Int,
+    val area: AreaNormalizada,
 )
 
 /**
@@ -43,4 +50,11 @@ interface DocumentoRepository {
 
     /** Substitui a seleção inteira. Quem continua selecionado mantém os campos que já tinha. */
     suspend fun definirSignatarios(documentoId: Long, adminId: Long, selecao: List<SelecaoSignatario>)
+
+    /**
+     * Substitui todos os campos do rascunho. Lança [IllegalArgumentException] se algum campo
+     * for de quem não é signatário do documento, apontar para uma página inexistente ou
+     * ultrapassar os limites da página.
+     */
+    suspend fun salvarCampos(documentoId: Long, adminId: Long, campos: List<NovoCampo>)
 }

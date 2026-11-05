@@ -108,4 +108,21 @@
         <item quantity="one">%1$d selecionado</item>
         <item quantity="other">%1$d selecionados</item>
     </plurals>
+
+    <string name="campos_titulo">Onde cada um assina</string>
+    <string name="campos_dica">Escolha o signatário, toque em “Novo campo” e arraste até o lugar da assinatura. Use o círculo no canto para redimensionar.</string>
+    <string name="campos_adicionar">Novo campo</string>
+    <string name="campos_excluir">Excluir campo selecionado</string>
+    <string name="campos_redimensionar">Redimensionar campo</string>
+    <string name="campos_descricao_campo">Campo de assinatura de %1$s</string>
+    <string name="campos_pagina">Pág. %1$d de %2$d</string>
+    <string name="campos_pagina_anterior">Página anterior</string>
+    <string name="campos_proxima_pagina">Próxima página</string>
+    <string name="campos_erro_carregar">Não foi possível abrir este rascunho. Volte e confira os signatários.</string>
+    <string name="campos_erro_salvar">Não foi possível salvar os campos. Tente novamente.</string>
+    <string name="campos_erro_sem_campo">Adicione ao menos um campo para: %1$s.</string>
+    <plurals name="campos_total">
+        <item quantity="one">%1$d campo</item>
+        <item quantity="other">%1$d campos</item>
+    </plurals>
 </resources>

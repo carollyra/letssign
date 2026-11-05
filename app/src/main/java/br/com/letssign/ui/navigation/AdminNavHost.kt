@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.letssign.domain.model.Usuario
+import br.com.letssign.ui.campos.PosicionamentoCamposScreen
 import br.com.letssign.ui.documento.NovoDocumentoScreen
 import br.com.letssign.ui.documento.SelecaoSignatariosScreen
 import br.com.letssign.ui.home.HomeAdminScreen
@@ -66,6 +67,12 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
             SelecaoSignatariosScreen(
                 onVoltar = navController::popBackStack,
                 onCadastrarSignatario = { navController.navigate(Rotas.signatarioForm()) },
+                onProximaEtapa = { navController.navigate(Rotas.documentoCampos(it)) },
+            )
+        }
+        composable(route = Rotas.DOCUMENTO_CAMPOS, arguments = listOf(argumentoDocumento)) {
+            PosicionamentoCamposScreen(
+                onVoltar = navController::popBackStack,
                 onProximaEtapa = { navController.popBackStack(Rotas.HOME, inclusive = false) },
             )
         }

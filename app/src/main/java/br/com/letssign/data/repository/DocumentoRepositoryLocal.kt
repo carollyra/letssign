@@ -17,7 +17,9 @@ import br.com.letssign.domain.model.Perfil
 import br.com.letssign.domain.model.SignatarioDoDocumento
 import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.domain.model.TipoEvento
+import br.com.letssign.domain.regra.GeometriaCampo
 import br.com.letssign.domain.repository.DocumentoRepository
+import br.com.letssign.domain.repository.NovoCampo
 import br.com.letssign.domain.repository.SelecaoSignatario
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -139,6 +141,33 @@ class DocumentoRepositoryLocal @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun salvarCampos(
+        documentoId: Long,
+        adminId: Long,
+        campos: List<NovoCampo>,
+    ) = banco.withTransaction {
+        val rascunho = rascunhoDoAdmin(documentoId, adminId)
+        val vinculoPorSignatario = vinculoDao.listarDoDocumento(documentoId)
+            .associate { it.signatarioId to it.id }
+        val novos = campos.map { campo ->
+            val vinculoId = requireNotNull(vinculoPorSignatario[campo.signatarioId]) {
+                "Campo de quem não é signatário do documento"
+            }
+            require(campo.pagina in 0 until rascunho.totalPaginas) { "Página inexistente" }
+            require(GeometriaCampo.dentroDaPagina(campo.area)) { "Campo fora dos limites da página" }
+            CampoAssinaturaEntity(
+                documentoSignatarioId = vinculoId,
+                pagina = campo.pagina,
+                x = campo.area.x,
+                y = campo.area.y,
+                largura = campo.area.largura,
+                altura = campo.area.altura,
+            )
+        }
+        campoDao.excluirDoDocumento(documentoId)
+        campoDao.inserir(novos)
     }
 
     private suspend fun rascunhoDoAdmin(documentoId: Long, adminId: Long): DocumentoEntity {
