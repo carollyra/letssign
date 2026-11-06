@@ -12,15 +12,13 @@ import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -48,6 +46,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.createBitmap
 import br.com.letssign.R
+import br.com.letssign.ui.common.BotaoDeTexto
+import br.com.letssign.ui.common.BotaoPrincipal
+import br.com.letssign.ui.theme.Espacos
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
 import kotlin.math.max
@@ -78,14 +79,15 @@ fun CapturaAssinaturaDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Espacos.m),
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(Espacos.l),
+                verticalArrangement = Arrangement.spacedBy(Espacos.s),
             ) {
                 Text(
                     stringResource(R.string.assinatura_dialogo_titulo),
@@ -96,12 +98,13 @@ fun CapturaAssinaturaDialog(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                // O quadro é sempre branco, como a folha onde a assinatura vai ser gravada.
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(220.dp)
-                        .background(Color.White, RoundedCornerShape(8.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+                        .background(Color.White, MaterialTheme.shapes.medium)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium)
                         .clipToBounds()
                         .semantics { contentDescription = descricao }
                         .pointerInput(Unit) {
@@ -119,7 +122,7 @@ fun CapturaAssinaturaDialog(
                         },
                 ) {
                     drawLine(
-                        color = Color(0xFFB0B8C4),
+                        color = Color(0xFFC9CED6),
                         start = Offset(size.width * 0.08f, size.height * 0.78f),
                         end = Offset(size.width * 0.92f, size.height * 0.78f),
                         strokeWidth = 1.dp.toPx(),
@@ -131,27 +134,28 @@ fun CapturaAssinaturaDialog(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TextButton(
+                    BotaoDeTexto(
+                        texto = stringResource(R.string.assinatura_limpar),
                         onClick = {
                             tracos.clear()
                             tracoAtual = emptyList()
                         },
-                        enabled = tracos.isNotEmpty(),
-                    ) {
-                        Text(stringResource(R.string.assinatura_limpar))
-                    }
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                    ) {
-                        TextButton(onClick = onCancelar) { Text(stringResource(R.string.acao_cancelar)) }
-                        Button(
-                            onClick = { onConfirmar(gerarPng(tracos.toList(), espessuraPx)) },
-                            enabled = desenhoSuficiente,
-                        ) {
-                            Text(stringResource(R.string.assinatura_confirmar))
-                        }
-                    }
+                        habilitado = tracos.isNotEmpty(),
+                        cor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.weight(1f))
+                    BotaoDeTexto(
+                        texto = stringResource(R.string.acao_cancelar),
+                        onClick = onCancelar,
+                        cor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    BotaoPrincipal(
+                        texto = stringResource(R.string.assinatura_confirmar),
+                        onClick = { onConfirmar(gerarPng(tracos.toList(), espessuraPx)) },
+                        habilitado = desenhoSuficiente,
+                        compacto = true,
+                        modifier = Modifier.padding(start = Espacos.xxs),
+                    )
                 }
             }
         }
