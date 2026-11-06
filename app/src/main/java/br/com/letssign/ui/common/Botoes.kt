@@ -33,9 +33,12 @@ import androidx.compose.ui.unit.dp
 import br.com.letssign.ui.theme.Movimento
 
 private val ALTURA_DO_BOTAO = 54.dp
-private val ALTURA_DO_BOTAO_DE_TEXTO = 44.dp
+private val ALTURA_COMPACTA = 44.dp
 
-/** Ação principal da tela. Com [carregando] mostra o indicador e ignora toques sem mudar de tamanho. */
+/**
+ * Ação principal da tela. Com [carregando] mostra o indicador e ignora toques; [compacto] é a
+ * versão mais baixa, para barras de ferramentas.
+ */
 @Composable
 fun BotaoPrincipal(
     texto: String,
@@ -44,6 +47,7 @@ fun BotaoPrincipal(
     habilitado: Boolean = true,
     carregando: Boolean = false,
     icone: ImageVector? = null,
+    compacto: Boolean = false,
 ) {
     val cores = MaterialTheme.colorScheme
     BotaoBase(
@@ -55,7 +59,8 @@ fun BotaoPrincipal(
         icone = icone,
         fundo = if (habilitado) cores.primary else cores.onSurface.copy(alpha = 0.10f),
         conteudo = if (habilitado) cores.onPrimary else cores.onSurface.copy(alpha = 0.38f),
-        altura = ALTURA_DO_BOTAO,
+        altura = if (compacto) ALTURA_COMPACTA else ALTURA_DO_BOTAO,
+        margemLateral = if (compacto) 16.dp else 20.dp,
     )
 }
 
@@ -68,6 +73,7 @@ fun BotaoSecundario(
     habilitado: Boolean = true,
     carregando: Boolean = false,
     icone: ImageVector? = null,
+    compacto: Boolean = false,
 ) {
     val cores = MaterialTheme.colorScheme
     BotaoBase(
@@ -79,7 +85,8 @@ fun BotaoSecundario(
         icone = icone,
         fundo = if (habilitado) cores.primaryContainer else cores.onSurface.copy(alpha = 0.06f),
         conteudo = if (habilitado) cores.primary else cores.onSurface.copy(alpha = 0.38f),
-        altura = ALTURA_DO_BOTAO,
+        altura = if (compacto) ALTURA_COMPACTA else ALTURA_DO_BOTAO,
+        margemLateral = if (compacto) 16.dp else 20.dp,
     )
 }
 
@@ -101,7 +108,7 @@ fun BotaoDeTexto(
         icone = icone,
         fundo = Color.Transparent,
         conteudo = if (habilitado) cor else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-        altura = ALTURA_DO_BOTAO_DE_TEXTO,
+        altura = ALTURA_COMPACTA,
         margemLateral = 12.dp,
     )
 }
@@ -195,6 +202,50 @@ fun BotaoIcone(
             .clickable(
                 interactionSource = interacoes,
                 indication = ripple(bounded = true),
+                enabled = habilitado,
+                role = Role.Button,
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icone, contentDescription = descricao, tint = tinta, modifier = Modifier.size(22.dp))
+    }
+}
+
+/** Botão quadrado só com ícone, da altura do botão principal, para dividir a linha com ele. */
+@Composable
+fun BotaoIconeTonal(
+    icone: ImageVector,
+    descricao: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    habilitado: Boolean = true,
+) {
+    val cores = MaterialTheme.colorScheme
+    val interacoes = remember { MutableInteractionSource() }
+    val escala by escalaAoPressionar(interacoes, pressionado = 0.94f)
+    val fundo by animateColorAsState(
+        targetValue = if (habilitado) cores.primaryContainer else cores.onSurface.copy(alpha = 0.06f),
+        animationSpec = Movimento.rapido(),
+        label = "fundoDoBotaoDeIcone",
+    )
+    val tinta by animateColorAsState(
+        targetValue = if (habilitado) cores.primary else cores.onSurface.copy(alpha = 0.38f),
+        animationSpec = Movimento.rapido(),
+        label = "tintaDoBotaoDeIcone",
+    )
+    Box(
+        modifier = modifier
+            .size(ALTURA_DO_BOTAO)
+            .graphicsLayer {
+                scaleX = escala
+                scaleY = escala
+            }
+            .clip(MaterialTheme.shapes.medium)
+            .drawBehind { drawRect(fundo) }
+            .clickable(
+                interactionSource = interacoes,
+                indication = ripple(color = cores.primary),
                 enabled = habilitado,
                 role = Role.Button,
                 onClick = onClick,

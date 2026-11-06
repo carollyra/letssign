@@ -133,7 +133,7 @@ fun MenuDaConta(usuario: Usuario, onSair: () -> Unit, modifier: Modifier = Modif
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = iniciais(usuario.nome),
+                    text = iniciaisDe(usuario.nome),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.semantics { contentDescription = descricao },
@@ -170,13 +170,4 @@ fun MenuDaConta(usuario: Usuario, onSair: () -> Unit, modifier: Modifier = Modif
             )
         }
     }
-}
-
-private fun iniciais(nome: String): String {
-    val partes = nome.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
-    return when (partes.size) {
-        0 -> "?"
-        1 -> partes.first().take(1)
-        else -> partes.first().take(1) + partes.last().take(1)
-    }.uppercase()
 }

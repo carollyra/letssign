@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -23,6 +24,8 @@ import br.com.letssign.domain.regra.GeometriaCampo
 import kotlin.math.roundToInt
 
 data class CampoVisual(val area: AreaNormalizada, val cor: Color, val rotulo: String)
+
+val FORMA_DO_CAMPO = RoundedCornerShape(6.dp)
 
 /** Desenha os campos, sem interação, por cima de uma página de [tamanho] pixels. */
 @Composable
@@ -37,18 +40,24 @@ fun CamposSobreAPagina(campos: List<CampoVisual>, tamanho: IntSize) {
                     width = with(densidade) { pixels.largura.toDp() },
                     height = with(densidade) { pixels.altura.toDp() },
                 )
-                .background(campo.cor.copy(alpha = 0.18f), RoundedCornerShape(4.dp))
-                .border(1.5.dp, campo.cor, RoundedCornerShape(4.dp)),
+                .background(campo.cor.copy(alpha = 0.14f), FORMA_DO_CAMPO)
+                .border(1.5.dp, campo.cor, FORMA_DO_CAMPO),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = campo.rotulo,
-                style = MaterialTheme.typography.labelSmall,
-                color = campo.cor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 4.dp),
-            )
+            RotuloDoCampo(texto = campo.rotulo, cor = campo.cor)
         }
     }
+}
+
+@Composable
+fun RotuloDoCampo(texto: String, cor: Color) {
+    Text(
+        text = texto,
+        style = MaterialTheme.typography.labelSmall,
+        fontWeight = FontWeight.SemiBold,
+        color = cor,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.padding(horizontal = 4.dp),
+    )
 }

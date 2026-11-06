@@ -16,3 +16,13 @@ fun formatarTelefone(digitos: String): String = when (digitos.length) {
     10 -> "(${digitos.substring(0, 2)}) ${digitos.substring(2, 6)}-${digitos.substring(6)}"
     else -> digitos
 }
+
+/** Primeira letra do primeiro e do último nome, para avatares. */
+fun iniciaisDe(nome: String): String {
+    val partes = nome.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+    return when (partes.size) {
+        0 -> "?"
+        1 -> partes.first().take(1)
+        else -> partes.first().take(1) + partes.last().take(1)
+    }.uppercase()
+}

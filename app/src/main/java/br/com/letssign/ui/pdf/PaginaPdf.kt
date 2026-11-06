@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -81,6 +82,7 @@ fun PaginaPdf(
     BoxWithConstraints(
         modifier = modifier
             .aspectRatio(proporcao)
+            .sombraDaFolha()
             .background(Color.White),
     ) {
         val tamanho = IntSize(constraints.maxWidth, constraints.maxHeight)
@@ -98,11 +100,14 @@ fun PaginaPdf(
             EstadoPagina.Carregando -> CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(32.dp),
+                    .size(24.dp),
+                strokeWidth = 2.5.dp,
+                color = COR_DO_CARREGAMENTO,
             )
             EstadoPagina.Erro -> Text(
                 text = stringResource(R.string.pdf_erro_pagina),
-                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                color = COR_DO_ERRO,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(16.dp),
@@ -119,3 +124,14 @@ fun PaginaPdf(
 }
 
 private const val PROPORCAO_A4 = 210f / 297f
+
+// A folha é sempre branca, então o que vai por cima dela não acompanha o tema escuro.
+private val COR_DO_CARREGAMENTO = Color(0xFF2B5BE0)
+private val COR_DO_ERRO = Color(0xFFC9372C)
+
+/** Sombra curta e fria, para a folha se destacar do fundo sem parecer um cartão. */
+private fun Modifier.sombraDaFolha(): Modifier = shadow(
+    elevation = 3.dp,
+    ambientColor = Color(0x331B2540),
+    spotColor = Color(0x331B2540),
+)
