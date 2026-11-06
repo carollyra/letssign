@@ -14,7 +14,14 @@ import br.com.letssign.ui.home.HomeSignatarioScreen
 fun SignatarioNavHost(usuario: Usuario, onSair: () -> Unit) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Rotas.HOME) {
+    NavHost(
+        navController = navController,
+        startDestination = Rotas.HOME,
+        enterTransition = Transicoes.entrar,
+        exitTransition = Transicoes.sair,
+        popEnterTransition = Transicoes.voltarEntrar,
+        popExitTransition = Transicoes.voltarSair,
+    ) {
         composable(Rotas.HOME) {
             HomeSignatarioScreen(
                 usuario = usuario,

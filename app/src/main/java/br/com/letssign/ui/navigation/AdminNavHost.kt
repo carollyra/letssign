@@ -22,7 +22,14 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
     val navController = rememberNavController()
     val argumentoDocumento = navArgument(Rotas.ARG_DOCUMENTO_ID) { type = NavType.LongType }
 
-    NavHost(navController = navController, startDestination = Rotas.HOME) {
+    NavHost(
+        navController = navController,
+        startDestination = Rotas.HOME,
+        enterTransition = Transicoes.entrar,
+        exitTransition = Transicoes.sair,
+        popEnterTransition = Transicoes.voltarEntrar,
+        popExitTransition = Transicoes.voltarSair,
+    ) {
         composable(Rotas.HOME) {
             HomeAdminScreen(
                 usuario = usuario,
