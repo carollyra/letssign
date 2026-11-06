@@ -1,16 +1,15 @@
 package br.com.letssign.ui.documento
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
@@ -36,6 +35,7 @@ import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.Carregando
 import br.com.letssign.ui.common.EstadoErro
 import br.com.letssign.ui.common.EstadoVazio
+import br.com.letssign.ui.common.FileiraDeChips
 import br.com.letssign.ui.common.rotulo
 
 @Composable
@@ -175,19 +175,17 @@ private fun ItemSignatario(
             }
         }
         if (item.papel != null) {
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-                    .padding(start = 48.dp, end = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                PapelSignatario.entries.forEach { papel ->
-                    FilterChip(
-                        selected = item.papel == papel,
-                        onClick = { onDefinirPapel(papel) },
-                        label = { Text(stringResource(papel.rotulo)) },
-                    )
-                }
+            val papeis = PapelSignatario.entries
+            FileiraDeChips(
+                quantidade = papeis.size,
+                indiceSelecionado = papeis.indexOf(item.papel),
+                margens = PaddingValues(start = 48.dp, end = 12.dp),
+            ) { indice ->
+                FilterChip(
+                    selected = item.papel == papeis[indice],
+                    onClick = { onDefinirPapel(papeis[indice]) },
+                    label = { Text(stringResource(papeis[indice].rotulo), maxLines = 1, softWrap = false) },
+                )
             }
         }
     }

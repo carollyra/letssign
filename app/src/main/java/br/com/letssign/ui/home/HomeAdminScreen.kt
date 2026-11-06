@@ -1,6 +1,5 @@
 package br.com.letssign.ui.home
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -42,6 +40,7 @@ import br.com.letssign.ui.common.EstadoErro
 import br.com.letssign.ui.common.EstadoLista
 import br.com.letssign.ui.common.EstadoVazio
 import br.com.letssign.ui.common.EtiquetaStatus
+import br.com.letssign.ui.common.FileiraDeChips
 import br.com.letssign.ui.common.formatarDataHora
 import br.com.letssign.ui.common.rotulo
 
@@ -127,33 +126,32 @@ private fun FiltroSituacao(
     selecionado: StatusDocumento?,
     onSelecionar: (StatusDocumento?) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    val filtros = listOf<StatusDocumento?>(null) + StatusDocumento.entries
+    FileiraDeChips(
+        quantidade = filtros.size,
+        indiceSelecionado = filtros.indexOf(selecionado),
+        modifier = Modifier.padding(vertical = 4.dp),
+    ) { indice ->
+        val status = filtros[indice]
         FilterChip(
-            selected = selecionado == null,
-            onClick = { onSelecionar(null) },
-            label = { Text(stringResource(R.string.filtro_todos, documentos.size)) },
-        )
-        StatusDocumento.entries.forEach { status ->
-            FilterChip(
-                selected = selecionado == status,
-                onClick = { onSelecionar(status) },
-                label = {
-                    Text(
+            selected = selecionado == status,
+            onClick = { onSelecionar(status) },
+            label = {
+                Text(
+                    text = if (status == null) {
+                        stringResource(R.string.filtro_todos, documentos.size)
+                    } else {
                         stringResource(
                             R.string.filtro_com_total,
                             stringResource(status.rotulo),
                             documentos.count { it.status == status },
-                        ),
-                    )
-                },
-            )
-        }
+                        )
+                    },
+                    maxLines = 1,
+                    softWrap = false,
+                )
+            },
+        )
     }
 }
 

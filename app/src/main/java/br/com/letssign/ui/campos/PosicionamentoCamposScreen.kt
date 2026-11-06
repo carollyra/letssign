@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -62,6 +60,7 @@ import br.com.letssign.domain.regra.GeometriaCampo
 import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.Carregando
 import br.com.letssign.ui.common.EstadoErro
+import br.com.letssign.ui.common.FileiraDeChips
 import br.com.letssign.ui.common.corDoSignatario
 import br.com.letssign.ui.common.rotulo
 import br.com.letssign.ui.documento.EtapaDocumento
@@ -165,37 +164,35 @@ fun PosicionamentoCamposScreen(
 
 @Composable
 private fun SeletorSignatario(estado: PosicionamentoUiState, onSelecionar: (Long) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        estado.signatarios.forEach { signatario ->
-            val total = estado.campos.count { it.signatarioId == signatario.id }
-            FilterChip(
-                selected = signatario.id == estado.signatarioAtivoId,
-                onClick = { onSelecionar(signatario.id) },
-                leadingIcon = {
-                    Box(
-                        Modifier
-                            .size(12.dp)
-                            .background(corDoSignatario(signatario.indiceCor), CircleShape),
+    FileiraDeChips(
+        quantidade = estado.signatarios.size,
+        indiceSelecionado = estado.signatarios.indexOfFirst { it.id == estado.signatarioAtivoId },
+    ) { indice ->
+        val signatario = estado.signatarios[indice]
+        val total = estado.campos.count { it.signatarioId == signatario.id }
+        FilterChip(
+            selected = signatario.id == estado.signatarioAtivoId,
+            onClick = { onSelecionar(signatario.id) },
+            leadingIcon = {
+                Box(
+                    Modifier
+                        .size(12.dp)
+                        .background(corDoSignatario(signatario.indiceCor), CircleShape),
+                )
+            },
+            label = {
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    Text(signatario.nome, maxLines = 1, softWrap = false)
+                    Text(
+                        text = stringResource(signatario.papel.rotulo) + " · " +
+                            pluralStringResource(R.plurals.campos_total, total, total),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                        softWrap = false,
                     )
-                },
-                label = {
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text(signatario.nome, maxLines = 1)
-                        Text(
-                            text = stringResource(signatario.papel.rotulo) + " · " +
-                                pluralStringResource(R.plurals.campos_total, total, total),
-                            style = MaterialTheme.typography.labelSmall,
-                        )
-                    }
-                },
-            )
-        }
+                }
+            },
+        )
     }
 }
 
