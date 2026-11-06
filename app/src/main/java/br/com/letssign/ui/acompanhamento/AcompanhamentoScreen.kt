@@ -41,8 +41,8 @@ import br.com.letssign.domain.model.TipoEvento
 import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.Carregando
 import br.com.letssign.ui.common.EstadoErro
-import br.com.letssign.ui.common.EtiquetaAssinatura
-import br.com.letssign.ui.common.EtiquetaStatus
+import br.com.letssign.ui.common.ChipAssinatura
+import br.com.letssign.ui.common.ChipStatus
 import br.com.letssign.ui.common.corDoSignatario
 import br.com.letssign.ui.common.formatarDataHora
 import br.com.letssign.ui.common.rotulo
@@ -141,7 +141,7 @@ private fun Resumo(documento: Documento) {
                         .weight(1f)
                         .padding(end = 8.dp),
                 )
-                EtiquetaStatus(documento.status)
+                ChipStatus(documento.status)
             }
             Text(
                 text = stringResource(R.string.documento_arquivo_versao, documento.nomeArquivo, documento.versao),
@@ -277,7 +277,7 @@ private fun Signatarios(signatarios: List<SignatarioDoDocumento>) {
                             )
                         }
                     }
-                    EtiquetaAssinatura(signatario.vinculo.status)
+                    ChipAssinatura(signatario.vinculo.status)
                 }
             }
         }

@@ -37,7 +37,7 @@ import br.com.letssign.ui.common.Carregando
 import br.com.letssign.ui.common.EstadoErro
 import br.com.letssign.ui.common.EstadoLista
 import br.com.letssign.ui.common.EstadoVazio
-import br.com.letssign.ui.common.EtiquetaAssinatura
+import br.com.letssign.ui.common.ChipAssinatura
 import br.com.letssign.ui.common.formatarDataHora
 import br.com.letssign.ui.common.rotulo
 
@@ -143,7 +143,7 @@ private fun ItemDoSignatario(item: DocumentoDoSignatario, onClick: () -> Unit) {
                         .weight(1f)
                         .padding(end = 8.dp),
                 )
-                EtiquetaAssinatura(item.vinculo.status)
+                ChipAssinatura(item.vinculo.status)
             }
             Text(
                 text = stringResource(R.string.home_signatario_papel, stringResource(item.vinculo.papel.rotulo)),

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LetsSign" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/fundo_da_janela</item>
+    </style>
+</resources>

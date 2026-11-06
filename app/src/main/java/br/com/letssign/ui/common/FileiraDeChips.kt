@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import br.com.letssign.ui.theme.Espacos
 
 /**
  * Fileira de chips que rola na horizontal. O chip de [indiceSelecionado] é trazido para dentro
@@ -22,7 +23,7 @@ fun FileiraDeChips(
     quantidade: Int,
     indiceSelecionado: Int,
     modifier: Modifier = Modifier,
-    margens: PaddingValues = PaddingValues(horizontal = 16.dp),
+    margens: PaddingValues = PaddingValues(horizontal = Espacos.tela),
     chip: @Composable (indice: Int) -> Unit,
 ) {
     val estado = rememberLazyListState()

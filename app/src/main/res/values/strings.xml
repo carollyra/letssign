@@ -12,6 +12,7 @@
     <string name="acao_salvando">Salvando…</string>
     <string name="acao_continuar">Continuar</string>
     <string name="acao_cancelar">Cancelar</string>
+    <string name="conta_menu">Conta</string>
     <string name="erro_inesperado">Algo deu errado. Tente novamente.</string>
     <string name="erro_sem_permissao">Você não tem permissão para fazer isso.</string>
 
@@ -30,11 +31,12 @@
 
     <string name="home_saudacao">Olá, %1$s</string>
     <string name="home_admin_titulo">Documentos</string>
-    <string name="home_admin_vazio">Você ainda não criou nenhum documento.</string>
-    <string name="home_admin_vazio_dica">Toque em “Novo documento” para enviar um PDF para assinatura.</string>
-    <string name="home_admin_vazio_filtro">Nenhum documento nesta situação.</string>
+    <string name="home_admin_vazio">Nenhum documento por aqui</string>
+    <string name="home_admin_vazio_dica">Envie um PDF para as pessoas assinarem.</string>
+    <string name="home_admin_vazio_filtro">Nenhum documento nesta situação</string>
+    <string name="home_admin_ver_todos">Ver todos</string>
     <string name="home_admin_novo_documento">Novo documento</string>
-    <string name="filtro_todos">Todos (%1$d)</string>
+    <string name="filtro_todos">Todos</string>
     <string name="filtro_com_total">%1$s (%2$d)</string>
     <string name="home_signatario_titulo">Meus documentos</string>
     <string name="home_signatario_pendentes">Pendentes</string>
