@@ -111,7 +111,6 @@
     <string name="pdf_erro_muito_grande">O PDF é grande demais para ser processado (limite de 50 MB). Escolha outro arquivo.</string>
     <string name="pdf_erro_leitura">Não foi possível ler o arquivo. Tente novamente ou escolha outro.</string>
 
-    <string name="selecao_titulo">Quem vai assinar</string>
     <string name="selecao_instrucao">Marque os signatários e escolha o papel de cada um.</string>
     <string name="selecao_vazio_descricao">Cadastre ao menos um signatário para continuar.</string>
     <string name="selecao_cadastrar">Cadastrar signatário</string>
@@ -121,7 +120,6 @@
         <item quantity="other">%1$d selecionados</item>
     </plurals>
 
-    <string name="campos_titulo">Onde cada um assina</string>
     <string name="campos_dica">Toque em “Novo campo” e arraste até o lugar da assinatura. O círculo no canto muda o tamanho.</string>
     <string name="campos_adicionar">Novo campo</string>
     <string name="campos_excluir">Excluir campo selecionado</string>
@@ -139,7 +137,6 @@
         <item quantity="other">%1$d campos</item>
     </plurals>
 
-    <string name="revisao_titulo">Revisão e envio</string>
     <string name="revisao_mensagem">Mensagem do convite</string>
     <string name="revisao_mensagem_rotulo">Texto que os signatários vão ler</string>
     <string name="revisao_mensagem_padrao">Olá! Você recebeu um documento para assinar pelo LetsSign. Abra o app, confira o conteúdo e assine nos campos indicados.</string>
