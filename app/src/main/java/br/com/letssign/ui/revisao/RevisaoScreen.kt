@@ -1,6 +1,11 @@
 package br.com.letssign.ui.revisao
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,28 +20,24 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,24 +46,35 @@ import br.com.letssign.domain.model.DocumentoDetalhado
 import br.com.letssign.domain.model.SignatarioDoDocumento
 import br.com.letssign.domain.regra.ErroEnvio
 import br.com.letssign.domain.regra.ProblemaEnvio
-import br.com.letssign.ui.common.BarraSuperior
+import br.com.letssign.ui.common.AvatarDoSignatario
+import br.com.letssign.ui.common.AvisoDeErro
+import br.com.letssign.ui.common.BotaoDeTexto
+import br.com.letssign.ui.common.BotaoPrincipal
+import br.com.letssign.ui.common.CampoTexto
 import br.com.letssign.ui.common.Carregando
+import br.com.letssign.ui.common.Cartao
+import br.com.letssign.ui.common.CheckAnimado
+import br.com.letssign.ui.common.Divisor
 import br.com.letssign.ui.common.EstadoErro
+import br.com.letssign.ui.common.Icones
+import br.com.letssign.ui.common.TituloDeSecao
 import br.com.letssign.ui.common.corDoSignatario
 import br.com.letssign.ui.common.rotulo
-import br.com.letssign.ui.documento.EtapaDocumento
-import br.com.letssign.ui.documento.IndicadorEtapa
+import br.com.letssign.ui.documento.AcoesDaEtapa
 import br.com.letssign.ui.pdf.CampoVisual
 import br.com.letssign.ui.pdf.CamposSobreAPagina
 import br.com.letssign.ui.pdf.EstadoPdf
 import br.com.letssign.ui.pdf.PaginaPdf
 import br.com.letssign.ui.pdf.rememberDocumentoPdf
+import br.com.letssign.ui.theme.Espacos
+import br.com.letssign.ui.theme.Movimento
 
 @Composable
 fun RevisaoScreen(
     onVoltar: () -> Unit,
     onConcluir: () -> Unit,
     onAcompanhar: (Long) -> Unit,
+    onEnviado: (Boolean) -> Unit,
     viewModel: RevisaoViewModel = hiltViewModel(),
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -71,64 +83,58 @@ fun RevisaoScreen(
     LaunchedEffect(mensagemPadrao) {
         viewModel.definirMensagemPadrao(mensagemPadrao)
     }
+    LaunchedEffect(estado.enviado) {
+        onEnviado(estado.enviado)
+    }
     // Depois do envio o documento é imutável: voltar levaria a telas de edição que não servem mais.
     BackHandler(enabled = estado.enviado, onBack = onConcluir)
 
-    Scaffold(
-        topBar = {
-            BarraSuperior(
-                titulo = stringResource(R.string.revisao_titulo),
-                onVoltar = if (estado.enviado) onConcluir else onVoltar,
-            )
-        },
-    ) { margens ->
-        val detalhe = estado.detalhe
-        when {
-            estado.carregando -> Carregando(Modifier.padding(margens))
-            estado.erroCarregar || detalhe == null -> EstadoErro(
-                mensagem = stringResource(R.string.documento_erro_nao_encontrado),
-                modifier = Modifier.padding(margens),
-                onTentarNovamente = viewModel::carregar,
-            )
-            estado.enviado -> ResultadoDoEnvio(
-                detalhe = detalhe,
-                onConcluir = onConcluir,
-                onAcompanhar = { onAcompanhar(detalhe.documento.id) },
-                modifier = Modifier.padding(margens),
-            )
-            else -> Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(margens)
-                    .imePadding(),
-            ) {
-                IndicadorEtapa(EtapaDocumento.REVISAO)
-                ConteudoDaRevisao(
-                    estado = estado,
+    val detalhe = estado.detalhe
+    when {
+        estado.carregando -> Carregando()
+        estado.erroCarregar || detalhe == null -> EstadoErro(
+            mensagem = stringResource(R.string.documento_erro_nao_encontrado),
+            onTentarNovamente = viewModel::carregar,
+        )
+        else -> AnimatedContent(
+            targetState = estado.enviado,
+            transitionSpec = {
+                (fadeIn(Movimento.lento()) + scaleIn(Movimento.lento(), initialScale = 0.96f))
+                    .togetherWith(fadeOut(Movimento.rapido()))
+            },
+            label = "envio",
+        ) { enviado ->
+            if (enviado) {
+                ResultadoDoEnvio(
                     detalhe = detalhe,
-                    onMudarMensagem = viewModel::aoMudarMensagem,
-                    modifier = Modifier.weight(1f),
+                    onConcluir = onConcluir,
+                    onAcompanhar = { onAcompanhar(detalhe.documento.id) },
                 )
-                Row(
+            } else {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        .fillMaxSize()
+                        .imePadding(),
                 ) {
-                    OutlinedButton(onClick = onVoltar, enabled = !estado.enviando) {
-                        Text(stringResource(R.string.acao_voltar))
-                    }
-                    Button(onClick = viewModel::enviar, enabled = !estado.enviando) {
-                        Text(
-                            stringResource(
-                                when {
-                                    estado.enviando -> R.string.revisao_enviando
-                                    estado.falha != null -> R.string.acao_tentar_novamente
-                                    else -> R.string.revisao_enviar
-                                },
-                            ),
-                        )
-                    }
+                    ConteudoDaRevisao(
+                        estado = estado,
+                        detalhe = detalhe,
+                        onMudarMensagem = viewModel::aoMudarMensagem,
+                        modifier = Modifier.weight(1f),
+                    )
+                    AcoesDaEtapa(
+                        textoPrincipal = stringResource(
+                            when {
+                                estado.enviando -> R.string.revisao_enviando
+                                estado.falha != null -> R.string.acao_tentar_novamente
+                                else -> R.string.revisao_enviar
+                            },
+                        ),
+                        onPrincipal = viewModel::enviar,
+                        carregando = estado.enviando,
+                        iconePrincipal = Icones.Enviar.takeIf { estado.falha == null },
+                        onVoltar = onVoltar,
+                    )
                 }
             }
         }
@@ -153,63 +159,43 @@ private fun ConteudoDaRevisao(
 
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = Espacos.tela, vertical = Espacos.xs),
+        verticalArrangement = Arrangement.spacedBy(Espacos.s),
     ) {
         if (estado.falha != null || estado.problemas.isNotEmpty()) {
-            item(key = "avisos") { Avisos(estado) }
+            item(key = "avisos") { Avisos(estado = estado, modifier = Modifier.animateItem()) }
         }
-        item(key = "documento") {
-            OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(detalhe.documento.titulo, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        text = stringResource(
-                            R.string.documento_arquivo_versao,
-                            detalhe.documento.nomeArquivo,
-                            detalhe.documento.versao,
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = pluralStringResource(
-                            R.plurals.documento_paginas,
-                            detalhe.documento.totalPaginas,
-                            detalhe.documento.totalPaginas,
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+        item(key = "documento") { ResumoDoDocumento(detalhe) }
+        item(key = "signatarios-titulo") {
+            TituloDeSecao(
+                texto = stringResource(R.string.signatarios_titulo),
+                modifier = Modifier.padding(top = Espacos.xs),
+            )
         }
         item(key = "signatarios") {
-            OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        stringResource(R.string.signatarios_titulo),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    detalhe.signatarios.forEachIndexed { indice, signatario ->
-                        LinhaSignatario(signatario = signatario, indiceCor = indice)
-                    }
+            Cartao(modifier = Modifier.fillMaxWidth(), margemInterna = PaddingValues(horizontal = Espacos.m)) {
+                detalhe.signatarios.forEachIndexed { indice, signatario ->
+                    if (indice > 0) Divisor()
+                    LinhaSignatario(signatario = signatario, indiceCor = indice)
                 }
             }
         }
+        item(key = "mensagem-titulo") {
+            TituloDeSecao(
+                texto = stringResource(R.string.revisao_mensagem),
+                modifier = Modifier.padding(top = Espacos.xs),
+            )
+        }
         item(key = "mensagem") {
-            OutlinedTextField(
-                value = estado.mensagem,
-                onValueChange = onMudarMensagem,
-                label = { Text(stringResource(R.string.revisao_mensagem)) },
-                isError = estado.problemas.any { it.erro == ErroEnvio.MENSAGEM_VAZIA },
-                minLines = 3,
-                maxLines = 6,
-                enabled = !estado.enviando,
-                modifier = Modifier.fillMaxWidth(),
+            CampoTexto(
+                valor = estado.mensagem,
+                aoMudar = onMudarMensagem,
+                rotulo = stringResource(R.string.revisao_mensagem_rotulo),
+                marcarErro = estado.problemas.any { it.erro == ErroEnvio.MENSAGEM_VAZIA },
+                umaLinha = false,
+                minimoDeLinhas = 3,
+                maximoDeLinhas = 6,
+                habilitado = !estado.enviando,
             )
         }
         when (pdf) {
@@ -217,24 +203,20 @@ private fun ConteudoDaRevisao(
                 Carregando(Modifier.height(160.dp))
             }
             EstadoPdf.Erro -> item(key = "pdf-erro") {
-                Text(
-                    text = stringResource(R.string.pdf_erro_abrir),
-                    color = MaterialTheme.colorScheme.error,
-                )
+                AvisoDeErro(texto = stringResource(R.string.pdf_erro_abrir))
             }
             is EstadoPdf.Pronto -> items(count = pdf.documento.totalPaginas, key = { "pagina-$it" }) { indice ->
                 val campos = camposPorPagina[indice].orEmpty()
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = stringResource(R.string.campos_pagina, indice + 1, pdf.documento.totalPaginas) +
+                Column(
+                    modifier = Modifier.padding(top = Espacos.xs),
+                    verticalArrangement = Arrangement.spacedBy(Espacos.xs),
+                ) {
+                    TituloDeSecao(
+                        texto = stringResource(R.string.campos_pagina, indice + 1, pdf.documento.totalPaginas) +
                             " · " + pluralStringResource(R.plurals.campos_total, campos.size, campos.size),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
-                        PaginaPdf(documento = pdf.documento, indice = indice) { tamanho ->
-                            CamposSobreAPagina(campos = campos, tamanho = tamanho)
-                        }
+                    PaginaPdf(documento = pdf.documento, indice = indice) { tamanho ->
+                        CamposSobreAPagina(campos = campos, tamanho = tamanho)
                     }
                 }
             }
@@ -243,19 +225,69 @@ private fun ConteudoDaRevisao(
 }
 
 @Composable
+private fun ResumoDoDocumento(detalhe: DocumentoDetalhado) {
+    Cartao(modifier = Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icones.Documento,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(22.dp),
+                )
+            }
+            Column(modifier = Modifier.padding(start = Espacos.s)) {
+                Text(
+                    text = detalhe.documento.titulo,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = stringResource(
+                        R.string.documento_arquivo_versao,
+                        detalhe.documento.nomeArquivo,
+                        detalhe.documento.versao,
+                    ) + " · " + pluralStringResource(
+                        R.plurals.documento_paginas,
+                        detalhe.documento.totalPaginas,
+                        detalhe.documento.totalPaginas,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun LinhaSignatario(signatario: SignatarioDoDocumento, indiceCor: Int) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            Modifier
-                .size(12.dp)
-                .background(corDoSignatario(indiceCor), CircleShape),
-        )
-        Column(modifier = Modifier.padding(start = 12.dp)) {
-            Text(signatario.usuario.nome, style = MaterialTheme.typography.bodyLarge)
+    Row(
+        modifier = Modifier.padding(vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AvatarDoSignatario(nome = signatario.usuario.nome, cor = corDoSignatario(indiceCor))
+        Column(modifier = Modifier.padding(start = Espacos.s)) {
+            Text(
+                text = signatario.usuario.nome,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
             Text(
                 text = stringResource(signatario.vinculo.papel.rotulo) + " · " + signatario.usuario.email,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             val paginas = signatario.campos.map { it.pagina + 1 }.distinct().sorted()
             Text(
@@ -281,42 +313,42 @@ private fun LinhaSignatario(signatario: SignatarioDoDocumento, indiceCor: Int) {
 }
 
 @Composable
-private fun Avisos(estado: RevisaoUiState) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        ),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
+private fun Avisos(estado: RevisaoUiState, modifier: Modifier = Modifier) {
+    val corDoTexto = MaterialTheme.colorScheme.onErrorContainer
+    AvisoDeErro(modifier = modifier) {
+        Column(verticalArrangement = Arrangement.spacedBy(Espacos.xxs)) {
             when (estado.falha) {
                 FalhaRevisao.ENVIO -> {
                     Text(
-                        stringResource(R.string.revisao_falha_titulo),
+                        text = stringResource(R.string.revisao_falha_titulo),
                         style = MaterialTheme.typography.titleSmall,
+                        color = corDoTexto,
                     )
                     Text(
-                        stringResource(R.string.revisao_falha_envio),
+                        text = stringResource(R.string.revisao_falha_envio),
                         style = MaterialTheme.typography.bodyMedium,
+                        color = corDoTexto,
                     )
                 }
                 FalhaRevisao.INESPERADA -> Text(
-                    stringResource(R.string.erro_inesperado),
+                    text = stringResource(R.string.erro_inesperado),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = corDoTexto,
                 )
                 null -> Unit
             }
             if (estado.problemas.isNotEmpty()) {
                 Text(
-                    stringResource(R.string.revisao_problemas_titulo),
+                    text = stringResource(R.string.revisao_problemas_titulo),
                     style = MaterialTheme.typography.titleSmall,
+                    color = corDoTexto,
                 )
                 estado.problemas.forEach { problema ->
-                    Text("• " + problema.descricao(), style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "• " + problema.descricao(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = corDoTexto,
+                    )
                 }
             }
         }
@@ -343,28 +375,31 @@ private fun ResultadoDoEnvio(
     detalhe: DocumentoDetalhado,
     onConcluir: () -> Unit,
     onAcompanhar: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
+    val haptico = LocalHapticFeedback.current
+    var vibrou by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (!vibrou) {
+            vibrou = true
+            haptico.performHapticFeedback(HapticFeedbackType.Confirm)
+        }
+    }
+
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(horizontal = Espacos.tela, vertical = Espacos.m),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            imageVector = Icons.Default.CheckCircle,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.tertiary,
-            modifier = Modifier.size(72.dp),
-        )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.weight(1f))
+        CheckAnimado()
+        Spacer(Modifier.height(Espacos.xl))
         Text(
             text = stringResource(R.string.revisao_enviado_titulo),
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Espacos.xs))
         Text(
             text = pluralStringResource(
                 R.plurals.revisao_enviado_descricao,
@@ -375,10 +410,19 @@ private fun ResultadoDoEnvio(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = Espacos.m),
         )
-        Spacer(Modifier.height(24.dp))
-        Button(onClick = onAcompanhar) { Text(stringResource(R.string.revisao_acompanhar)) }
-        Spacer(Modifier.height(8.dp))
-        OutlinedButton(onClick = onConcluir) { Text(stringResource(R.string.revisao_voltar_inicio)) }
+        Spacer(Modifier.weight(1.3f))
+        BotaoPrincipal(
+            texto = stringResource(R.string.revisao_acompanhar),
+            onClick = onAcompanhar,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(Espacos.xxs))
+        BotaoDeTexto(
+            texto = stringResource(R.string.revisao_voltar_inicio),
+            onClick = onConcluir,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }

@@ -79,9 +79,9 @@
     <string name="documento_recebido_em">Recebido em %1$s</string>
     <string name="documento_assinado_em">Assinado em %1$s</string>
     <string name="documento_novo_titulo">Novo documento</string>
-    <string name="documento_nenhum_pdf">Nenhum PDF selecionado.</string>
+    <string name="documento_nenhum_pdf">Escolha o arquivo que vai ser assinado. Ele é copiado para dentro do app.</string>
     <string name="documento_selecionar_pdf">Selecionar PDF</string>
-    <string name="documento_trocar_pdf">Trocar PDF</string>
+    <string name="documento_trocar_pdf">Trocar</string>
     <string name="documento_verificando_pdf">Verificando o arquivo…</string>
     <string name="documento_erro_titulo">Informe um título com até 120 caracteres.</string>
     <string name="documento_erro_sem_arquivo">Selecione o PDF que será assinado.</string>
@@ -92,10 +92,10 @@
         <item quantity="other">%1$d páginas</item>
     </plurals>
 
-    <string name="etapa_posicao">Etapa %1$d de %2$d · %3$s</string>
+    <string name="etapa_posicao">Etapa %1$d de %2$d</string>
     <string name="etapa_arquivo">Documento</string>
-    <string name="etapa_signatarios">Signatários</string>
-    <string name="etapa_campos">Campos de assinatura</string>
+    <string name="etapa_signatarios">Quem vai assinar</string>
+    <string name="etapa_campos">Onde cada um assina</string>
     <string name="etapa_revisao">Revisão e envio</string>
 
     <string name="pdf_pagina">Página %1$d do documento</string>
@@ -119,12 +119,13 @@
     </plurals>
 
     <string name="campos_titulo">Onde cada um assina</string>
-    <string name="campos_dica">Escolha o signatário, toque em “Novo campo” e arraste até o lugar da assinatura. Use o círculo no canto para redimensionar.</string>
+    <string name="campos_dica">Toque em “Novo campo” e arraste até o lugar da assinatura. O círculo no canto muda o tamanho.</string>
     <string name="campos_adicionar">Novo campo</string>
     <string name="campos_excluir">Excluir campo selecionado</string>
     <string name="campos_redimensionar">Redimensionar campo</string>
     <string name="campos_descricao_campo">Campo de assinatura de %1$s</string>
     <string name="campos_pagina">Pág. %1$d de %2$d</string>
+    <string name="campos_pagina_curta">%1$d de %2$d</string>
     <string name="campos_pagina_anterior">Página anterior</string>
     <string name="campos_proxima_pagina">Próxima página</string>
     <string name="campos_erro_carregar">Não foi possível abrir este rascunho. Volte e confira os signatários.</string>
@@ -137,6 +138,7 @@
 
     <string name="revisao_titulo">Revisão e envio</string>
     <string name="revisao_mensagem">Mensagem do convite</string>
+    <string name="revisao_mensagem_rotulo">Texto que os signatários vão ler</string>
     <string name="revisao_mensagem_padrao">Olá! Você recebeu um documento para assinar pelo LetsSign. Abra o app, confira o conteúdo e assine nos campos indicados.</string>
     <string name="revisao_sem_campos">Nenhum campo de assinatura</string>
     <plurals name="revisao_campos_nas_paginas">

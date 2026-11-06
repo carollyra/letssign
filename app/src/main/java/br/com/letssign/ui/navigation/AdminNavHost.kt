@@ -9,11 +9,8 @@ import androidx.navigation.navArgument
 import br.com.letssign.domain.model.Usuario
 import br.com.letssign.ui.acompanhamento.AcompanhamentoScreen
 import br.com.letssign.ui.acompanhamento.VisualizadorPdfScreen
-import br.com.letssign.ui.campos.PosicionamentoCamposScreen
-import br.com.letssign.ui.documento.NovoDocumentoScreen
-import br.com.letssign.ui.documento.SelecaoSignatariosScreen
+import br.com.letssign.ui.documento.FluxoDocumentoScreen
 import br.com.letssign.ui.home.HomeAdminScreen
-import br.com.letssign.ui.revisao.RevisaoScreen
 import br.com.letssign.ui.signatarios.SignatarioFormScreen
 import br.com.letssign.ui.signatarios.SignatariosScreen
 
@@ -35,11 +32,11 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
                 usuario = usuario,
                 onSair = onSair,
                 onSignatarios = { navController.navigate(Rotas.SIGNATARIOS) },
-                onNovoDocumento = { navController.navigate(Rotas.documentoArquivo()) },
+                onNovoDocumento = { navController.navigate(Rotas.documentoFluxo()) },
                 onAbrirDocumento = { documento ->
                     navController.navigate(
                         if (documento.editavel) {
-                            Rotas.documentoArquivo(documento.id)
+                            Rotas.documentoFluxo(documento.id)
                         } else {
                             Rotas.documentoAcompanhamento(documento.id)
                         },
@@ -66,35 +63,18 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
             SignatarioFormScreen(onVoltar = navController::popBackStack)
         }
         composable(
-            route = Rotas.DOCUMENTO_ARQUIVO,
+            route = Rotas.DOCUMENTO_FLUXO,
             arguments = listOf(
                 navArgument(Rotas.ARG_DOCUMENTO_ID) {
                     type = NavType.LongType
                     defaultValue = 0L
                 },
             ),
-        ) {
-            NovoDocumentoScreen(
-                onVoltar = navController::popBackStack,
-                onProximaEtapa = { navController.navigate(Rotas.documentoSignatarios(it)) },
-            )
-        }
-        composable(route = Rotas.DOCUMENTO_SIGNATARIOS, arguments = listOf(argumentoDocumento)) {
-            SelecaoSignatariosScreen(
-                onVoltar = navController::popBackStack,
+        ) { entrada ->
+            FluxoDocumentoScreen(
+                documentoId = entrada.arguments?.getLong(Rotas.ARG_DOCUMENTO_ID) ?: 0L,
+                onFechar = navController::popBackStack,
                 onCadastrarSignatario = { navController.navigate(Rotas.signatarioForm()) },
-                onProximaEtapa = { navController.navigate(Rotas.documentoCampos(it)) },
-            )
-        }
-        composable(route = Rotas.DOCUMENTO_CAMPOS, arguments = listOf(argumentoDocumento)) {
-            PosicionamentoCamposScreen(
-                onVoltar = navController::popBackStack,
-                onProximaEtapa = { navController.navigate(Rotas.documentoRevisao(it)) },
-            )
-        }
-        composable(route = Rotas.DOCUMENTO_REVISAO, arguments = listOf(argumentoDocumento)) {
-            RevisaoScreen(
-                onVoltar = navController::popBackStack,
                 onConcluir = { navController.popBackStack(Rotas.HOME, inclusive = false) },
                 onAcompanhar = { id ->
                     navController.navigate(Rotas.documentoAcompanhamento(id)) {
@@ -108,7 +88,7 @@ fun AdminNavHost(usuario: Usuario, onSair: () -> Unit) {
                 onVoltar = navController::popBackStack,
                 onAbrirPdf = { navController.navigate(Rotas.documentoPdf(it)) },
                 onEditarRascunho = { id ->
-                    navController.navigate(Rotas.documentoArquivo(id)) {
+                    navController.navigate(Rotas.documentoFluxo(id)) {
                         popUpTo(Rotas.HOME)
                     }
                 },

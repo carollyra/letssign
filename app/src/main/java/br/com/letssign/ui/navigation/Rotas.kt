@@ -8,6 +8,7 @@ object Rotas {
     const val SIGNATARIO_FORM = "signatarios/form?$ARG_SIGNATARIO_ID={$ARG_SIGNATARIO_ID}"
 
     const val ARG_DOCUMENTO_ID = "documentoId"
+    const val DOCUMENTO_FLUXO = "documento/fluxo?$ARG_DOCUMENTO_ID={$ARG_DOCUMENTO_ID}"
     const val DOCUMENTO_ARQUIVO = "documento/arquivo?$ARG_DOCUMENTO_ID={$ARG_DOCUMENTO_ID}"
     const val DOCUMENTO_SIGNATARIOS = "documento/{$ARG_DOCUMENTO_ID}/signatarios"
     const val DOCUMENTO_CAMPOS = "documento/{$ARG_DOCUMENTO_ID}/campos"
@@ -18,7 +19,7 @@ object Rotas {
 
     fun signatarioForm(id: Long? = null) = "signatarios/form?$ARG_SIGNATARIO_ID=${id ?: 0}"
 
-    fun documentoArquivo(id: Long? = null) = "documento/arquivo?$ARG_DOCUMENTO_ID=${id ?: 0}"
+    fun documentoFluxo(id: Long? = null) = "documento/fluxo?$ARG_DOCUMENTO_ID=${id ?: 0}"
 
     fun documentoSignatarios(id: Long) = "documento/$id/signatarios"
 
