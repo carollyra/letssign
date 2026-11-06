@@ -21,9 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -46,6 +43,7 @@ import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.domain.model.Usuario
 import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.BotaoDeTexto
+import br.com.letssign.ui.common.BotaoFlutuante
 import br.com.letssign.ui.common.BotaoIcone
 import br.com.letssign.ui.common.BotaoPrincipal
 import br.com.letssign.ui.common.Carregando
@@ -104,7 +102,11 @@ fun HomeAdminScreen(
                 enter = scaleIn(Movimento.medio()) + fadeIn(Movimento.medio()),
                 exit = scaleOut(Movimento.rapido()) + fadeOut(Movimento.rapido()),
             ) {
-                BotaoNovoDocumento(onClick = onNovoDocumento)
+                BotaoFlutuante(
+                    texto = stringResource(R.string.home_admin_novo_documento),
+                    icone = Icones.Mais,
+                    onClick = onNovoDocumento,
+                )
             }
         },
     ) { margens ->
@@ -182,29 +184,6 @@ fun HomeAdminScreen(
             }
         }
     }
-}
-
-@Composable
-private fun BotaoNovoDocumento(onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        onClick = onClick,
-        icon = { Icon(Icones.Mais, contentDescription = null, modifier = Modifier.size(20.dp)) },
-        text = {
-            Text(
-                text = stringResource(R.string.home_admin_novo_documento),
-                style = MaterialTheme.typography.labelLarge,
-            )
-        },
-        shape = CircleShape,
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        elevation = FloatingActionButtonDefaults.elevation(
-            defaultElevation = 6.dp,
-            pressedElevation = 2.dp,
-            focusedElevation = 6.dp,
-            hoveredElevation = 8.dp,
-        ),
-    )
 }
 
 @Composable

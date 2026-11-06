@@ -41,8 +41,11 @@
     <string name="home_signatario_titulo">Meus documentos</string>
     <string name="home_signatario_pendentes">Pendentes</string>
     <string name="home_signatario_assinados">Assinados</string>
-    <string name="home_signatario_vazio_pendentes">Nenhum documento aguardando a sua assinatura.</string>
-    <string name="home_signatario_vazio_assinados">Você ainda não assinou nenhum documento.</string>
+    <string name="home_signatario_vazio_pendentes">Tudo em dia</string>
+    <string name="home_signatario_vazio_pendentes_descricao">Nenhum documento aguardando a sua assinatura.</string>
+    <string name="home_signatario_ver_assinados">Ver assinados</string>
+    <string name="home_signatario_ver_pendentes">Ver pendentes</string>
+    <string name="home_signatario_vazio_assinados">Nenhum documento assinado ainda</string>
     <string name="home_signatario_papel">Você assina como %1$s</string>
 
     <string name="signatarios_titulo">Signatários</string>
@@ -177,6 +180,8 @@
     <string name="assinatura_limpar">Limpar</string>
     <string name="assinatura_confirmar">Confirmar</string>
     <string name="assinatura_sucesso_titulo">Assinatura registrada</string>
+    <string name="assinatura_sucesso_descricao">Ela foi aplicada em todos os seus campos do documento.</string>
+    <string name="assinatura_ver_documento">Ver documento assinado</string>
     <string name="assinatura_ja_assinado">Você já assinou este documento</string>
     <string name="assinatura_erro_carregar">Este documento não está disponível para você.</string>
     <string name="assinatura_erro_vazia">Desenhe a assinatura antes de confirmar.</string>
@@ -191,7 +196,7 @@
     <string name="acompanhamento_derivado">Nova versão de um documento já enviado.</string>
     <string name="acompanhamento_abrir_final">Abrir PDF final assinado</string>
     <string name="acompanhamento_ver_documento">Ver documento</string>
-    <string name="acompanhamento_continuar_rascunho">Continuar edição do rascunho</string>
+    <string name="acompanhamento_continuar_rascunho">Continuar edição</string>
     <string name="acompanhamento_nova_versao">Criar nova versão</string>
     <string name="acompanhamento_nova_versao_criando">Criando nova versão…</string>
     <string name="acompanhamento_nova_versao_confirmar">Criar rascunho</string>
@@ -199,6 +204,11 @@
     <string name="acompanhamento_nova_versao_erro">Não foi possível criar a nova versão. Tente novamente.</string>
     <string name="acompanhamento_imutavel">Depois do envio o documento não pode ser alterado. Para mudar algo, crie uma nova versão.</string>
     <string name="acompanhamento_sem_signatarios">Nenhum signatário.</string>
+    <string name="acompanhamento_datas">Datas</string>
+    <plurals name="acompanhamento_assinaturas">
+        <item quantity="one">%1$d de %2$d assinatura coletada</item>
+        <item quantity="other">%1$d de %2$d assinaturas coletadas</item>
+    </plurals>
     <string name="acompanhamento_historico">Histórico</string>
     <string name="acompanhamento_historico_vazio">Nenhum evento registrado.</string>
     <string name="evento_criado">Documento criado por %1$s</string>

@@ -5,16 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.letssign.R
@@ -22,9 +17,11 @@ import br.com.letssign.domain.model.StatusDocumento
 import br.com.letssign.ui.common.BarraSuperior
 import br.com.letssign.ui.common.Carregando
 import br.com.letssign.ui.common.EstadoErro
+import br.com.letssign.ui.common.TituloDeSecao
 import br.com.letssign.ui.pdf.EstadoPdf
 import br.com.letssign.ui.pdf.PaginaPdf
 import br.com.letssign.ui.pdf.rememberDocumentoPdf
+import br.com.letssign.ui.theme.Espacos
 
 @Composable
 fun VisualizadorPdfScreen(
@@ -61,19 +58,24 @@ fun VisualizadorPdfScreen(
                 )
                 is EstadoPdf.Pronto -> LazyColumn(
                     modifier = Modifier.padding(margens),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(
+                        start = Espacos.tela,
+                        end = Espacos.tela,
+                        top = Espacos.xs,
+                        bottom = Espacos.xl,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(Espacos.l),
                 ) {
                     items(count = pdf.documento.totalPaginas, key = { it }) { indice ->
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = stringResource(R.string.campos_pagina, indice + 1, pdf.documento.totalPaginas),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        Column(verticalArrangement = Arrangement.spacedBy(Espacos.xs)) {
+                            TituloDeSecao(
+                                texto = stringResource(
+                                    R.string.campos_pagina,
+                                    indice + 1,
+                                    pdf.documento.totalPaginas,
+                                ),
                             )
-                            Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
-                                PaginaPdf(documento = pdf.documento, indice = indice)
-                            }
+                            PaginaPdf(documento = pdf.documento, indice = indice)
                         }
                     }
                 }

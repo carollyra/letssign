@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -254,4 +256,24 @@ fun BotaoIconeTonal(
     ) {
         Icon(icone, contentDescription = descricao, tint = tinta, modifier = Modifier.size(22.dp))
     }
+}
+
+/** Ação principal flutuante das telas de lista. */
+@Composable
+fun BotaoFlutuante(texto: String, icone: ImageVector, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        icon = { Icon(icone, contentDescription = null, modifier = Modifier.size(20.dp)) },
+        text = { Text(text = texto, style = MaterialTheme.typography.labelLarge) },
+        shape = CircleShape,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        elevation = FloatingActionButtonDefaults.elevation(
+            defaultElevation = 6.dp,
+            pressedElevation = 2.dp,
+            focusedElevation = 6.dp,
+            hoveredElevation = 8.dp,
+        ),
+        modifier = modifier,
+    )
 }
